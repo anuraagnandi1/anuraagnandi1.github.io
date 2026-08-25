@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#9b0000" />
+  <title>Shawarmazed — Expect the Unexpected</title>
+  <meta name="description" content="Shawarmazed: bold shawarmas, bowls and flavours that hit different." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="noise"></div>
+
+  <header class="nav-wrap">
+    <nav class="nav container">
+      <a class="brand" href="#top" aria-label="Shawarmazed home">
+        <img src="assets/shawarmazed-logo.png" alt="Shawarmazed logo" />
+      </a>
+      <div class="nav-links">
+        <a href="#menu">Menu</a>
+        <a href="#vibe">Our vibe</a>
+        <a href="#story">Our Story</a>
+      </div>
+      <button class="cart-btn" id="cartButton">
+        <span>Cart</span><span class="cart-count" id="cartCount">0</span>
+      </button>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero hero-video">
+      <video class="hero-bg-video" autoplay muted loop playsinline preload="metadata">
+        <source src="https://videos.pexels.com/video-files/25823076/11912123_2160_3840_60fps.mp4" type="video/mp4">
+      </video>
+      <div class="hero-video-overlay"></div>
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <div class="eyebrow">EXPECT THE UNEXPECTED.</div>
+          <h1>ONE BITE.<br><span>GET SHAWARMAZED.</span></h1>
+          <p class="hero-sub">Big flavours. Zero boring. Shawarmas made for cravings, screenshots and “bro, try this.”</p>
+          <div class="hero-actions">
+            <a class="btn primary" href="#menu">Order your fix <span>↗</span></a>
+            <a class="btn ghost" href="#vibe">Catch the vibe</a>
+          </div>
+          <div class="proof">
+            <div><strong>26+</strong><span>Shawarma Choices</span></div>
+            <div><strong>390+</strong><span>Locations Listed</span></div>
+            <div><strong>∞</strong><span>Main-Character Energy</span></div>
+          </div>
+        </div>
+        <div class="hero-art">
+          <div class="art-card">
+            <div class="stamp">THIS ONE<br>HITS DIFFERENT!</div>
+            <img src="assets/brand-packaging.png" alt="Shawarmazed packaging artwork" />
+          </div>
+          <div class="float-chip chip-one">SHEEESH.</div>
+          <div class="float-chip chip-two">10/10. WOULD BITE AGAIN.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ticker" aria-label="brand phrases">
+      <div class="ticker-track">
+        <span>WAIT… WHAT?</span><b>✦</b><span>RIZZZ</span><b>✦</b><span>SAY LESS.</span><b>✦</b><span>THIS SLAPS.</span><b>✦</b>
+        <span>DRIPP</span><b>✦</b><span>INSTANT FAVE.</span><b>✦</b><span>NO CRUMBS.</span><b>✦</b><span>BRB, GETTING THAT.</span><b>✦</b>
+      </div>
+    </section>
+
+    <section class="menu-section" id="menu">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">THE LINE-UP</span>
+            <h2>Pick your <span>plot twist.</span></h2>
+          </div>
+          <p>Classic, smoky, spicy, peppy, paneer, bowls — whatever mood you walked in with, we’ve got a shawarma for it.</p>
+        </div>
+
+        <div class="filters" id="filters">
+          <button class="filter active" data-filter="All">All</button>
+          <button class="filter" data-filter="Chicken">Chicken</button>
+          <button class="filter" data-filter="Paneer">Paneer</button>
+          <button class="filter" data-filter="Veg">Veg</button>
+          <button class="filter" data-filter="Bowl">Bowls</button>
+          <button class="filter" data-filter="Spicy">Spicy</button>
+        </div>
+
+        <div class="product-grid" id="productGrid"></div>
+      </div>
+    </section>
+
+    
+    <section class="post-menu-intro">
+      <div class="container">
+        <div class="post-menu-head">
+          <span class="eyebrow">POST-MENU ENERGY</span>
+          <h2>Okay, but why are we <span>this obsessed?</span></h2>
+          <p>Because Shawarmazed is not just about picking a shawarma. It’s about picking your mood, your sauce personality and your “I’m ordering this again” moment.</p>
+        </div>
+
+        <div class="chaos-strip">
+          <div class="chaos-card">
+            <span class="chaos-kicker">MOOD 01</span>
+            <h3>Smoky & chill</h3>
+            <p>Low drama. High flavour.</p>
+            <span class="chaos-word">SMOKY</span>
+          </div>
+          <div class="chaos-card featured">
+            <span class="chaos-kicker">MOOD 02</span>
+            <h3>Fiery main character</h3>
+            <p>Zero subtlety. Exactly the point.</p>
+            <span class="chaos-word">FIERY</span>
+          </div>
+          <div class="chaos-card">
+            <span class="chaos-kicker">MOOD 03</span>
+            <h3>Peppy chaos</h3>
+            <p>Bright, punchy, instantly addictive.</p>
+            <span class="chaos-word">PEPPY</span>
+          </div>
+        </div>
+
+        <div class="mini-marquee">
+          <div class="mini-marquee-track">
+            <span>ONE MORE BITE.</span><b>✦</b>
+            <span>MAKE IT SPICY.</span><b>✦</b>
+            <span>NO BORING ORDERS.</span><b>✦</b>
+            <span>GET SHAWARMAZED.</span><b>✦</b>
+            <span>ONE MORE BITE.</span><b>✦</b>
+            <span>MAKE IT SPICY.</span><b>✦</b>
+            <span>NO BORING ORDERS.</span><b>✦</b>
+            <span>GET SHAWARMAZED.</span><b>✦</b>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="vibe-section" id="vibe">
+      <div class="container vibe-grid">
+        <div class="vibe-card teal">
+          <span class="mini">01 / PICK</span>
+          <h3>Choose your chaos.</h3>
+          <p>Smoky? Peppy? Fiery? Paneer? Bowl? There are no wrong answers.</p>
+          <div class="doodle">🌯</div>
+        </div>
+        <div class="vibe-card cream">
+          <span class="mini">02 / BITE</span>
+          <h3>First bite = plot twist.</h3>
+          <p>Big sauce energy, packed fillings and the kind of flavour that interrupts conversations.</p>
+          <div class="doodle">🔥</div>
+        </div>
+        <div class="vibe-card red">
+          <span class="mini">03 / REPEAT</span>
+          <h3>Now you're Shawarmazed.</h3>
+          <p>Congratulations. Your “usual order” has officially entered a new era.</p>
+          <div class="doodle">😎</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="about-section" id="about">
+      <div class="container about-grid">
+        <div class="about-copy">
+          <span class="eyebrow">WHY SHAWARMAZED?</span>
+          <h2>Not a wrap.<br><span>A whole mood.</span></h2>
+          <p>Shawarmazed is built around one simple idea: shawarma should never feel routine. We take familiar favourites and hit them with bolder sauces, louder flavour combinations and a brand personality that’s impossible to scroll past.</p>
+          <div class="feature-row">
+            <div><strong>Made for cravings</strong><span>Fast, filling, flavour-first.</span></div>
+            <div><strong>Built for choice</strong><span>Chicken, paneer, falafel & bowls.</span></div>
+            <div><strong>Always a little extra</strong><span>Because basic is not the brief.</span></div>
+          </div>
+        </div>
+        <div class="quote-card">
+          <div class="quote-mark">“</div>
+          <p>EXPECT THE<br>UNEXPECTED.</p>
+          <span>BE SHAWARMAZED.</span>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="story-section" id="story">
+      <div class="container story-grid">
+        <div class="story-visual">
+          <div class="story-orbit orbit-one"></div>
+          <div class="story-orbit orbit-two"></div>
+          <div class="story-card main-story-card">
+            <span class="eyebrow">OUR STORY</span>
+            <div class="story-big">SHAWARMA<br>+ AMAZED</div>
+            <p>That’s the whole idea.</p>
+          </div>
+          <div class="story-chip chip-a">NO BORING BITES.</div>
+          <div class="story-chip chip-b">EXPECT THE UNEXPECTED.</div>
+        </div>
+        <div class="story-copy">
+          <span class="eyebrow">HOW IT STARTED</span>
+          <h2>We wanted shawarma to feel <span>fun again.</span></h2>
+          <p>Shawarmazed was imagined as a shawarma-first brand with more personality, more flavour and none of the usual “same wrap, different board” energy.</p>
+          <p>So we built a line-up around bold combinations — smoky, peppy, fiery, BBQ, chipotle, paneer, falafel and bowls — and wrapped it inside a brand that talks like the people eating it.</p>
+          <div class="story-points">
+            <div><strong>Shawarma-first</strong><span>No distractions. This is the main event.</span></div>
+            <div><strong>Made to surprise</strong><span>Familiar cravings with a louder twist.</span></div>
+            <div><strong>Made for now</strong><span>Fast, social, playful and unapologetically Gen Z.</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-section">
+      <div class="container cta-box">
+        <div>
+          <span class="eyebrow light">HUNGRY YET?</span>
+          <h2>Don't overthink it.<br>Order the shawarma.</h2>
+        </div>
+        <a href="#menu" class="btn cream-btn">Find your favourite ↗</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-grid">
+      <img src="assets/shawarmazed-logo.png" alt="Shawarmazed" />
+      <div class="footer-copy">
+        <strong>THIS ONE HITS DIFFERENT.</strong>
+        <span>© 2026 Shawarmazed. Demo brand website.</span>
+      </div>
+      <div class="socials">
+        <a href="#">Instagram</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <aside class="cart-drawer" id="cartDrawer">
+    <div class="cart-head">
+      <div>
+        <span class="eyebrow">YOUR ORDER</span>
+        <h3>Good choices only.</h3>
+      </div>
+      <button class="icon-btn" id="closeCart" aria-label="Close cart">×</button>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-empty" id="cartEmpty">
+      <div class="empty-emoji">🌯</div>
+      <strong>Cart looking a little empty.</strong>
+      <span>Fix that immediately.</span>
+    </div>
+    <div class="cart-bottom">
+      <div class="total-row"><span>Total</span><strong id="cartTotal">₹0</strong></div>
+      <button class="btn primary full" id="checkoutBtn">Checkout →</button>
+      <small>Demo checkout — no payment is processed.</small>
+    </div>
+  </aside>
+  <div class="overlay" id="overlay"></div>
+
+  <div class="checkout-modal" id="checkoutModal">
+    <div class="checkout-card">
+      <button class="icon-btn modal-close" id="closeCheckout">×</button>
+      <span class="eyebrow">CHECKOUT</span>
+      <h3>Almost Shawarmazed.</h3>
+      <form id="checkoutForm">
+        <div class="form-grid">
+          <label>Full name<input required name="name" placeholder="Your name" /></label>
+          <label>Phone<input required name="phone" placeholder="+91" pattern="[0-9+ ]{8,15}" /></label>
+          <label class="wide">Delivery address<textarea required name="address" placeholder="House / hostel / office, area, landmark"></textarea></label>
+          <label>Payment
+            <select name="payment">
+              <option>Cash on Delivery</option>
+              <option>UPI on Delivery</option>
+            </select>
+          </label>
+          <label>Notes<input name="notes" placeholder="Extra spicy? No onions?" /></label>
+        </div>
+        <div class="order-preview" id="orderPreview"></div>
+        <button class="btn primary full" type="submit">Place demo order →</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    window.SHAWARMAZED_PRODUCTS = [{"name": "Classic Peppy Chicken Shawarma", "price": 169, "cat": "Chicken", "tag": "Peppy", "spice": 1, "img": "https://snapcalorie-webflow-website.s3.us-east-2.amazonaws.com/media/food_pics_v2/medium/shawerma_sandwich.jpg"}, {"name": "Classic Smoky Chicken Shawarma", "price": 169, "cat": "Chicken", "tag": "Smoky", "spice": 1, "img": "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy%2Cf_auto%2Cq_auto/FOOD_CATALOG/IMAGES/CMS/2025/6/15/60b00651-7282-44d3-91b0-a4f5f7f6e281_a02a7de2-73c3-495c-a32e-351f9467bc6e.jpg"}, {"name": "Paneer Tikka Shawarma", "price": 159, "cat": "Paneer", "tag": "Tikka", "spice": 1, "img": "https://coox-new.s3.ap-south-1.amazonaws.com/images/d/dishes/Paneer%20Shawarma-28-dish-img.jpeg?v=1761996283179"}, {"name": "Special Smoky Chicken Shawarma", "price": 199, "cat": "Chicken", "tag": "Special", "spice": 1, "img": "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy%2Cf_auto%2Cq_auto/FOOD_CATALOG/IMAGES/CMS/2025/6/15/60b00651-7282-44d3-91b0-a4f5f7f6e281_a02a7de2-73c3-495c-a32e-351f9467bc6e.jpg"}, {"name": "Special Peppy Chicken Shawarma", "price": 199, "cat": "Chicken", "tag": "Special", "spice": 2, "img": "https://snapcalorie-webflow-website.s3.us-east-2.amazonaws.com/media/food_pics_v2/medium/shawerma_sandwich.jpg"}, {"name": "Spicy Chicken Shawarma Bowl", "price": 219, "cat": "Bowl", "tag": "Spicy", "spice": 3, "img": "https://myrecipespace.com/wp-content/uploads/2025/01/Image_3-126.png"}, {"name": "Sizzled Falafel Shawarma", "price": 149, "cat": "Veg", "tag": "Falafel", "spice": 1, "img": "https://tb-static.uber.com/prod/image-proc/processed_images/ba1e811d16d648d0b97470701dadda27/58f691da9eaef86b0b51f9b2c483fe63.jpeg"}, {"name": "Classic Chicken Shawarma Bowl", "price": 209, "cat": "Bowl", "tag": "Classic", "spice": 1, "img": "https://myrecipespace.com/wp-content/uploads/2025/01/Image_3-126.png"}, {"name": "Smoky BBQ Chicken Shawarma", "price": 189, "cat": "Chicken", "tag": "BBQ", "spice": 1, "img": "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy%2Cf_auto%2Cq_auto/FOOD_CATALOG/IMAGES/CMS/2025/6/15/60b00651-7282-44d3-91b0-a4f5f7f6e281_a02a7de2-73c3-495c-a32e-351f9467bc6e.jpg"}, {"name": "Spicy Chipotle Chicken Shawarma", "price": 189, "cat": "Chicken", "tag": "Chipotle", "spice": 3, "img": "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy%2Cf_auto%2Cq_auto/FOOD_CATALOG/IMAGES/CMS/2025/9/4/6259617e-8c2a-4379-afc4-db5e71e0bf6d_ed042067-b71d-4f7f-8171-9803cd2c048e.jpg"}, {"name": "Fiery Schezwan Chicken Shawarma", "price": 189, "cat": "Chicken", "tag": "Schezwan", "spice": 3, "img": "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy%2Cf_auto%2Cq_auto/FOOD_CATALOG/IMAGES/CMS/2025/9/4/6259617e-8c2a-4379-afc4-db5e71e0bf6d_ed042067-b71d-4f7f-8171-9803cd2c048e.jpg"}, {"name": "Spicy Chipotle Paneer Shawarma", "price": 179, "cat": "Paneer", "tag": "Chipotle", "spice": 3, "img": "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy%2Cf_auto%2Cq_auto/FOOD_CATALOG/IMAGES/CMS/2026/2/23/9fef6d27-3455-4fca-9d65-8ed726e8e2a7_c40cce9f-6975-4268-b8b8-fc39b5603337.png_compressed"}, {"name": "Smoky BBQ Paneer Shawarma", "price": 179, "cat": "Paneer", "tag": "BBQ", "spice": 1, "img": "https://coox-new.s3.ap-south-1.amazonaws.com/images/d/dishes/Paneer%20Shawarma-28-dish-img.jpeg?v=1761996283179"}, {"name": "Fiery Schezwan Paneer Shawarma", "price": 179, "cat": "Paneer", "tag": "Schezwan", "spice": 3, "img": "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy%2Cf_auto%2Cq_auto/FOOD_CATALOG/IMAGES/CMS/2026/2/23/9fef6d27-3455-4fca-9d65-8ed726e8e2a7_c40cce9f-6975-4268-b8b8-fc39b5603337.png_compressed"}];
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>
