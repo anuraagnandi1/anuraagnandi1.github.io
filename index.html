@@ -1,283 +1,1228 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#9b0000" />
-  <title>Shawarmazed — Expect the Unexpected</title>
-  <meta name="description" content="Shawarmazed: bold shawarmas, bowls and flavours that hit different." />
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pakka Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Latin:wdth,wght@75..125,400..800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: desktop is a three-part stage (thesis and journey | the phone | product notes).
+   Below 1140px the thesis moves on top; below 780px everything stacks and the app fills the width.
+   Palette: stamp-pad violet ink on cool paper; marigold marks an "if", sea green marks "in". */
+:root{
+  --paper:#F3F3F9;
+  --surface:#FFFFFF;
+  --sunk:#EBEBF4;
+  --ink:#23205C;
+  --ink-2:#56547C;
+  --ink-3:#8987A6;
+  --line:#DCDBEA;
+  --on-ink:#FFFFFF;
+  --stamp:#3A33B0;
+  --stamp-blend:multiply;
+  --if:#E39500;
+  --if-soft:#FFF0C7;
+  --if-text:#7A4F00;
+  --in:#08705F;
+  --in-soft:#DBF1EA;
+  --out:#B5362F;
+  --out-soft:#FAE3E1;
+  --bubble:#FFFFFF;
+  --bubble-me:#E2E0F8;
+  --focus:#3A33B0;
+  --shade:rgba(35,32,92,.26);
+  --shade-soft:rgba(35,32,92,.07);
+  --display:"Anek Latin","Arial Narrow","Roboto Condensed",system-ui,sans-serif;
+  --body:"Mukta","Segoe UI",system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10112A; --surface:#191A37; --sunk:#14152F; --ink:#ECEBFF; --ink-2:#AEADD2; --ink-3:#7C7BA2;
+    --line:#2C2D55; --on-ink:#14153A; --stamp:#A59EFF; --stamp-blend:screen; --if:#FFB52A; --if-soft:#3B2E0D;
+    --if-text:#FFD27A; --in:#45D0B6; --in-soft:#10332D; --out:#FF857C; --out-soft:#3C1C21; --bubble:#22234A;
+    --bubble-me:#2E2B66; --focus:#A59EFF; --shade:rgba(0,0,0,.55); --shade-soft:rgba(0,0,0,.3);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10112A; --surface:#191A37; --sunk:#14152F; --ink:#ECEBFF; --ink-2:#AEADD2; --ink-3:#7C7BA2;
+  --line:#2C2D55; --on-ink:#14153A; --stamp:#A59EFF; --stamp-blend:screen; --if:#FFB52A; --if-soft:#3B2E0D;
+  --if-text:#FFD27A; --in:#45D0B6; --in-soft:#10332D; --out:#FF857C; --out-soft:#3C1C21; --bubble:#22234A;
+  --bubble-me:#2E2B66; --focus:#A59EFF; --shade:rgba(0,0,0,.55); --shade-soft:rgba(0,0,0,.3);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+html,body{background:var(--paper)}
+body{color:var(--ink);font:400 16px/1.55 var(--body);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+p,h1,h2,h3,ul,ol,dl,dd{margin:0}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:6px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- page frame ---------- */
+.stage{max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px 36px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:2px 22px}
+.brand{display:flex;align-items:baseline;gap:12px;min-width:0;flex-wrap:wrap}
+.wordmark{font:800 28px/1 var(--display);font-stretch:78%;color:var(--ink);letter-spacing:.01em}
+.brand-sub{font-size:14px;color:var(--ink-2)}
+.stepper{display:flex;align-items:center;gap:6px;flex:none}
+.step-label{font-size:14px;color:var(--ink-2);min-width:100px;text-align:center;font-variant-numeric:tabular-nums}
+.icon-btn{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;color:var(--ink);padding:0}
+.icon-btn:disabled{opacity:.35;cursor:default}
+.icon-btn svg{width:18px;height:18px}
+
+.cols{display:grid;grid-template-columns:minmax(230px,290px) minmax(340px,392px) minmax(260px,1fr);gap:40px;align-items:start}
+.thesis{display:flex;flex-direction:column;gap:24px;min-width:0;padding-top:4px}
+.th-a,.th-b{display:flex;flex-direction:column;gap:18px;min-width:0}
+.thesis h1{font:700 clamp(28px,2.7vw,38px)/1.06 var(--display);font-stretch:80%;letter-spacing:-.005em;text-wrap:balance}
+.lede{color:var(--ink-2);font-size:16.5px;line-height:1.6}
+.pu{display:grid;gap:10px}
+.pu div{display:grid;grid-template-columns:42px 1fr;gap:8px}
+.pu dt{font-weight:600;font-size:14px}
+.pu dd{font-size:14.5px;color:var(--ink-2);line-height:1.5}
+.journey{list-style:none;padding:0;display:grid;gap:2px}
+.journey button{width:100%;display:flex;align-items:center;gap:12px;padding:7px 10px;border-radius:12px;border:0;background:transparent;text-align:left;font-size:15px;color:var(--ink-2)}
+.journey button:hover{background:var(--sunk)}
+.j-n{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font:700 13px/1 var(--display);border:1.5px solid var(--line);color:var(--ink-2);font-variant-numeric:tabular-nums}
+.journey button[aria-current="step"]{color:var(--ink);font-weight:600}
+.journey button[aria-current="step"] .j-n{background:var(--ink);border-color:var(--ink);color:var(--on-ink)}
+.j-short{display:none}
+.try{font-size:14px;line-height:1.55;color:var(--ink-2);padding:12px 14px;border-radius:14px;background:var(--if-soft)}
+.try strong{color:var(--ink);font-weight:600}
+
+.device-wrap{display:flex;flex-direction:column;gap:10px;min-width:0}
+.persona{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink-2);min-height:20px}
+.persona svg{width:16px;height:16px;flex:none}
+.persona b{color:var(--ink);font-weight:600}
+.device{position:relative;width:100%;height:clamp(640px,calc(100vh - 130px),820px);background:var(--surface);border:1px solid var(--line);border-radius:34px;box-shadow:0 1px 2px var(--shade-soft),0 26px 60px -26px var(--shade);overflow:hidden;display:flex;flex-direction:column}
+
+.notes{position:sticky;top:18px;min-width:0;padding-top:30px}
+.n-k{font-size:13px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.n-title{font:700 24px/1.15 var(--display);font-stretch:85%;margin-top:4px;text-wrap:balance}
+.n-b{margin-top:18px}
+.n-b h3{font:600 14.5px/1.3 var(--body);color:var(--ink)}
+.n-b p{margin-top:4px;font-size:15px;line-height:1.6;color:var(--ink-2);max-width:62ch}
+.n-src{margin-top:18px;font-size:13px;color:var(--ink-3)}
+.n-src a,.credit a{color:inherit;text-underline-offset:2px}
+
+.credit{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--ink-3);line-height:1.55;max-width:90ch}
+
+/* ---------- inside the phone ---------- */
+.screen{display:flex;flex-direction:column;height:100%;min-height:0}
+.app-head{flex:none;display:flex;align-items:center;gap:10px;padding:14px 16px 12px;border-bottom:1px solid var(--line);background:var(--surface);min-height:58px}
+.app-head .wordmark{font-size:22px}
+.app-head .ctx{font-size:14px;color:var(--ink-2);margin-left:auto;text-align:right;min-width:0}
+.app-body{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+.app-foot{flex:none;padding:12px 16px 16px;border-top:1px solid var(--line);background:var(--surface);display:flex;flex-direction:column;gap:8px}
+.foot-note{font-size:13px;color:var(--ink-2);text-align:center}
+.pad{padding:18px 16px 26px;display:flex;flex-direction:column;gap:16px}
+.scr-title{font:700 23px/1.15 var(--display);font-stretch:85%;text-wrap:balance}
+.scr-sub{font-size:14.5px;color:var(--ink-2);margin-top:-8px}
+.mini{font:600 14px/1.3 var(--body);color:var(--ink)}
+.muted{color:var(--ink-2)}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:12px 18px;border-radius:14px;border:1px solid transparent;font-weight:600;font-size:16px;line-height:1.2;text-align:center}
+.btn-primary{background:var(--ink);color:var(--on-ink);width:100%}
+.btn-quiet{background:transparent;color:var(--ink);border-color:var(--line);width:100%}
+.btn.sm{min-height:40px;padding:8px 14px;font-size:15px;width:auto}
+.link-btn{background:none;border:0;padding:4px 0;color:var(--ink);font-weight:600;font-size:14.5px;text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--ink-3)}
+
+.pill{display:inline-flex;align-items:center;gap:5px;font:600 13px/1.25 var(--body);padding:3px 9px;border-radius:999px;white-space:nowrap}
+.pill.in{background:var(--in-soft);color:var(--in)}
+.pill.if{background:var(--if-soft);color:var(--if-text);white-space:normal}
+.pill.out{background:var(--out-soft);color:var(--out)}
+.pill.maybe{background:var(--sunk);color:var(--ink-2)}
+
+.switch{display:inline-flex;align-items:center;gap:9px;cursor:pointer;font-size:14px;color:var(--ink);user-select:none}
+.switch input{position:absolute;opacity:0;width:1px;height:1px}
+.switch .track{position:relative;width:38px;height:22px;border-radius:999px;background:var(--line);flex:none;transition:background .2s}
+.switch .track::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:var(--surface);box-shadow:0 1px 2px var(--shade-soft);transition:transform .2s}
+.switch input:checked + .track{background:var(--ink)}
+.switch input:checked + .track::after{transform:translateX(16px)}
+.switch input:focus-visible + .track{outline:3px solid var(--focus);outline-offset:2px}
+
+/* S1: the group chat */
+.chat-head .back{width:22px;height:22px;color:var(--ink-2);flex:none}
+.g-av{width:36px;height:36px;border-radius:50%;background:var(--if-soft);color:var(--if-text);display:grid;place-items:center;font:700 14px/1 var(--display);flex:none}
+.g-meta{min-width:0}
+.g-title{font-weight:600;font-size:16px;line-height:1.2}
+.g-sub{font-size:12.5px;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.strip{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:10px 14px;background:var(--surface);border-bottom:1px solid var(--line)}
+.stat{display:flex;flex-direction:column;line-height:1.15}
+.s-lbl{font-size:12px;color:var(--ink-2)}
+.s-val{font:700 19px/1.1 var(--display);font-variant-numeric:tabular-nums}
+.stat.zero .s-val{color:var(--out)}
+.strip .switch{margin-left:auto}
+.chat{background:var(--sunk);padding:12px 12px 20px;display:flex;flex-direction:column;gap:6px;min-height:calc(100% - 60px)}
+.day{align-self:center;font-size:12px;color:var(--ink-2);background:var(--surface);border-radius:8px;padding:2px 10px;margin:8px 0 2px}
+.msg{max-width:86%;padding:6px 10px 5px;border-radius:12px;background:var(--bubble);font-size:15px;line-height:1.42;align-self:flex-start;box-shadow:0 1px 0 var(--shade-soft);overflow-wrap:anywhere}
+.msg.me{align-self:flex-end;background:var(--bubble-me)}
+.msg .who{display:block;font-size:12.5px;font-weight:600;color:var(--ink-2)}
+.msg .tm{float:right;font-size:11px;color:var(--ink-3);margin:7px 0 -3px 10px;font-variant-numeric:tabular-nums}
+mark.ifm{background:var(--if-soft);color:inherit;border-bottom:2px solid var(--if);border-radius:3px;padding:0 1px}
+.chat.plain mark.ifm{background:none;border:0;padding:0}
+.receipt{align-self:flex-end;font-size:11.5px;color:var(--ink-3);margin:-2px 4px 2px 0}
+.poll{min-width:230px}
+.poll-k{font-size:12px;color:var(--ink-2)}
+.poll-q{font-weight:600;margin:2px 0 6px}
+.opt{display:grid;grid-template-columns:1fr auto;gap:2px 8px;font-size:14px;margin-bottom:6px}
+.opt .bar{grid-column:1/-1;height:5px;border-radius:3px;background:var(--line);overflow:hidden}
+.opt .bar i{display:block;height:100%;background:var(--ink-2);border-radius:3px}
+.poll-n{font-size:12px;color:var(--ink-2)}
+
+/* S2: what Pakka read */
+.found{border:1px solid var(--line);border-radius:16px;padding:12px 14px}
+.kv{display:grid;gap:4px;margin-top:8px}
+.kv div{display:grid;grid-template-columns:52px 1fr;gap:8px;font-size:14.5px}
+.kv dt{color:var(--ink-2)}
+.people{list-style:none;padding:0;display:flex;flex-direction:column}
+.person{display:flex;gap:11px;padding:11px 0;border-top:1px solid var(--line)}
+.person:first-child{border-top:0}
+.av{flex:none;width:36px;height:36px;border-radius:50%;background:var(--sunk);color:var(--ink-2);display:grid;place-items:center;font:700 13px/1 var(--display)}
+.p-main{min-width:0;flex:1;display:flex;flex-direction:column;gap:3px}
+.p-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.p-name{font-weight:600;font-size:15.5px}
+.p-quote{font-size:13.5px;color:var(--ink-2);line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}
+.privacy{display:flex;gap:9px;align-items:flex-start;font-size:13.5px;color:var(--ink-2);line-height:1.5;background:var(--sunk);border-radius:14px;padding:10px 12px}
+.privacy svg{width:16px;height:16px;flex:none;margin-top:2px;color:var(--ink)}
+.try-own{border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.hint{font-size:13.5px;color:var(--ink-2);line-height:1.5}
+.try-own textarea{width:100%;min-height:150px;resize:vertical;border:1px solid var(--line);border-radius:12px;background:var(--sunk);padding:10px;font-size:13px;line-height:1.45}
+.row-btns{display:flex;gap:8px;flex-wrap:wrap}
+.try-sum{font-weight:600;font-size:14.5px}
+.try-empty{font-size:14px;color:var(--out)}
+
+/* S3: the pact */
+.stay-card{display:grid;grid-template-columns:52px 1fr auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:16px;padding:12px}
+.stay-art{width:52px;height:52px;border-radius:12px;background:var(--if-soft);display:grid;place-items:center}
+.stay-art svg{width:38px;height:38px}
+.stay-name{font-weight:600;font-size:15.5px;line-height:1.25}
+.stay-meta{font-size:13px;color:var(--ink-2);line-height:1.4}
+.stay-price{font:700 18px/1.1 var(--display);text-align:right;font-variant-numeric:tabular-nums}
+.stay-price span{display:block;font:400 12px/1.3 var(--body);color:var(--ink-2)}
+.field{display:flex;flex-direction:column;gap:8px}
+.f-lbl{font-weight:600;font-size:14.5px}
+.f-help{font-size:13px;color:var(--ink-2);margin-top:-2px}
+.stepper-ctl{display:flex;align-items:center;gap:12px}
+.step-val{font-size:15.5px}
+.step-val b{font:800 26px/1 var(--display);font-variant-numeric:tabular-nums;margin-right:2px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:14px;font-weight:500;line-height:1.2}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--on-ink)}
+.hold-box{background:var(--sunk);border-radius:16px;padding:14px}
+.hold-line{font-size:16px}
+.hold-line b{font:800 24px/1 var(--display);font-variant-numeric:tabular-nums}
+.hold-help{font-size:13.5px;color:var(--ink-2);margin-top:4px;line-height:1.5}
+.ph{width:100%;border-collapse:collapse;margin-top:10px;font-size:14px}
+.ph th{text-align:left;font-weight:600;font-size:12.5px;color:var(--ink-2);padding:4px 0}
+.ph td{padding:6px 0;border-top:1px solid var(--line);vertical-align:top}
+.ph td:first-child,.ph th:first-child{padding-right:14px;white-space:nowrap}
+.ph .num{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap;padding-right:12px}
+.ph .note{font-size:12.5px;color:var(--if-text)}
+.ph tr.min td:first-child{font-weight:600}
+.safety{display:flex;gap:9px;font-size:14px;line-height:1.5;color:var(--ink)}
+.safety svg{width:18px;height:18px;flex:none;color:var(--in);margin-top:2px}
+
+/* S4: a friend's link */
+.inbound{display:flex;flex-direction:column;gap:4px;background:var(--sunk);border-radius:16px;padding:10px}
+.in-from{font-size:12.5px;color:var(--ink-2)}
+.inbound .msg{max-width:100%;box-shadow:none}
+.linkcard{display:flex;flex-direction:column;margin-top:8px;border-radius:10px;border:1px solid var(--line);padding:8px 10px;background:var(--surface)}
+.lc-mark{font:800 15px/1 var(--display);font-stretch:78%}
+.lc-title{font-weight:600;font-size:14.5px;margin-top:4px}
+.lc-sub{font-size:12.5px;color:var(--ink-2)}
+.who-in{font-size:14.5px;line-height:1.5}
+.prefill{font-size:14px;line-height:1.5;color:var(--ink-2);border-left:3px solid var(--if);padding-left:10px}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.seg button{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:10px 6px;font-size:14px;font-weight:600;line-height:1.2}
+.seg button[aria-checked="true"]{background:var(--ink);color:var(--on-ink);border-color:var(--ink)}
+.ifb{display:flex;flex-direction:column;gap:12px;border:1.5px dashed var(--if);border-radius:16px;padding:12px}
+.ifb-row{display:flex;flex-direction:column;gap:7px}
+.ifb .f-lbl{font-size:13.5px}
+.ifb .chip{padding:6px 10px;font-size:13.5px}
+.ifb-sum{font-size:14.5px;font-weight:600;color:var(--if-text);background:var(--if-soft);border-radius:10px;padding:8px 10px}
+.pay{display:flex;flex-direction:column;gap:8px}
+.pay-opt{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:1px;border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:10px 12px}
+.pay-opt[aria-checked="true"]{border:2px solid var(--ink);padding:9px 11px}
+.po-title{font-weight:600;font-size:15px}
+.po-sub{font-size:13px;color:var(--ink-2)}
+.done-card{border:1px solid var(--in);background:var(--in-soft);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.done-title{font:700 20px/1.2 var(--display);font-stretch:85%;color:var(--in)}
+.done-card p{font-size:14.5px;line-height:1.5}
+
+.sheet-wrap{position:absolute;inset:0;z-index:20;display:flex;flex-direction:column;justify-content:flex-end}
+.sheet-back{position:absolute;inset:0;background:var(--shade);border:0;padding:0;width:100%}
+.sheet{position:relative;background:var(--surface);border-radius:22px 22px 0 0;padding:20px 18px 18px;display:flex;flex-direction:column;gap:10px;box-shadow:0 -10px 40px var(--shade)}
+.sheet-k{font-size:13px;color:var(--ink-2)}
+.sheet h3{font:700 24px/1.15 var(--display);font-stretch:85%}
+.sheet ul{padding-left:18px;font-size:14.5px;line-height:1.5;display:flex;flex-direction:column;gap:3px}
+.sheet-note{font-size:12.5px;color:var(--ink-3)}
+
+/* S5: the deadline */
+.s5-top{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mk{font-size:12.5px;color:var(--ink-2)}
+.mv{font-size:14.5px;font-weight:600;line-height:1.3}
+.ticker{border-radius:18px;background:var(--sunk);padding:14px 16px;display:flex;flex-direction:column;gap:2px}
+.tk-cap{font-size:13px;color:var(--ink-2)}
+.tk-num{font:800 58px/1 var(--display);font-stretch:78%;font-variant-numeric:tabular-nums;letter-spacing:-.01em;color:var(--ink)}
+.tk-sub{font-size:14px;color:var(--ink-2)}
+.ticker[data-final="lock"]{background:var(--in-soft)}
+.ticker[data-final="lock"] .tk-num{color:var(--in)}
+.ticker[data-final="fail"] .tk-num{color:var(--ink-2)}
+.seatbar{position:relative;display:grid;grid-template-columns:repeat(8,1fr);gap:4px;margin:6px 0 18px}
+.seatbar i{height:10px;border-radius:3px;background:var(--line);transition:background .3s}
+.seatbar i.on{background:var(--in)}
+.seatbar i.tent{background:var(--ink-3)}
+.sb-mark{position:absolute;top:-4px;bottom:-4px;width:0;border-left:2px solid var(--ink)}
+.sb-mark span{position:absolute;top:20px;left:-1px;white-space:nowrap;font-size:11.5px;color:var(--ink-2);transform:translateX(-50%)}
+.board{display:grid;grid-template-columns:repeat(4,1fr);gap:12px 6px}
+.seat{display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center;min-width:0}
+.seat .av{width:44px;height:44px;font-size:14px;border:2px dashed var(--ink-3);background:var(--surface);transition:transform .25s,background .3s,border-color .3s}
+.seat-n{font-size:13px;font-weight:600;line-height:1.2;margin-top:2px}
+.seat-s{font-size:11.5px;color:var(--ink-2);line-height:1.2}
+.seat[data-state="in"] .av{border:2px solid var(--in);background:var(--in-soft);color:var(--in);transform:scale(1.04)}
+.seat[data-state="in"] .seat-s{color:var(--in);font-weight:600}
+.seat[data-state="tentative"] .av{border:2px solid var(--ink-3)}
+.seat[data-state="fell"] .av{border:2px solid var(--out);background:var(--out-soft);color:var(--out)}
+.seat[data-state="fell"] .seat-s{color:var(--out)}
+.seat[data-state="released"] .av,.seat[data-state="cant"] .av{border:2px solid var(--line);background:var(--sunk);color:var(--ink-3)}
+.seat[data-state="cant"] .seat-n,.seat[data-state="released"] .seat-n{color:var(--ink-3)}
+.log{list-style:none;padding:0;display:flex;flex-direction:column;gap:6px}
+.lg{display:flex;gap:9px;align-items:flex-start;font-size:14.5px;line-height:1.45;padding:7px 9px;border-radius:12px}
+.lg.new{background:var(--if-soft)}
+.lg-ic{flex:none;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;margin-top:1px}
+.lg-ic svg{width:14px;height:14px}
+.lg-base .lg-ic,.lg-join .lg-ic{background:var(--in-soft);color:var(--in)}
+.lg-pact .lg-ic{background:var(--if-soft);color:var(--if-text)}
+.lg-released .lg-ic,.lg-drop .lg-ic,.lg-trigger .lg-ic{background:var(--out-soft);color:var(--out)}
+.lg-start .lg-ic{background:var(--sunk);color:var(--ink-2)}
+.outcome{border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:6px}
+.outcome.ok{background:var(--in-soft);border:1px solid var(--in)}
+.outcome.fail{background:var(--sunk);border:1px solid var(--line)}
+.oc-title{font:700 21px/1.2 var(--display);font-stretch:85%}
+.outcome.ok .oc-title{color:var(--in)}
+.outcome p{font-size:14.5px;line-height:1.5}
+.fix{margin-top:4px;border:1.5px dashed var(--if);border-radius:12px;padding:10px 12px;background:var(--surface);display:flex;flex-direction:column;gap:4px}
+.fix-t{font-weight:600}
+.fix-note{font-size:13px;color:var(--ink-2)}
+.whatif{border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:10px}
+.wi-btns{display:flex;gap:16px;flex-wrap:wrap}
+
+/* S6: it's pakka */
+.ticket{position:relative;border:1px solid var(--line);border-radius:18px;padding:16px 16px 18px;background:var(--surface);overflow:hidden}
+.tkt-title{font:800 34px/1 var(--display);font-stretch:80%}
+.tkt-dates{font-size:14.5px;color:var(--ink-2);margin-top:4px}
+.tkt-rows{display:grid;gap:7px;margin-top:22px;padding-top:14px;border-top:1.5px dashed var(--line)}
+.tkt-rows div{display:grid;grid-template-columns:54px 1fr;gap:8px;font-size:14.5px;line-height:1.4}
+.tkt-rows dt{color:var(--ink-2)}
+.stamp{position:absolute;right:12px;top:14px;width:148px;height:auto;color:var(--stamp);transform:rotate(-9deg);mix-blend-mode:var(--stamp-blend);opacity:.92;pointer-events:none}
+.stamp.thump{animation:thump .6s cubic-bezier(.2,.9,.3,1.15) .3s both}
+@keyframes thump{0%{opacity:0;transform:scale(1.9) rotate(-15deg)}60%{opacity:.95;transform:scale(.94) rotate(-8deg)}100%{opacity:.92;transform:scale(1) rotate(-9deg)}}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fact{background:var(--sunk);border-radius:14px;padding:10px 12px;display:flex;flex-direction:column}
+.f-num{font:800 24px/1.1 var(--display);font-variant-numeric:tabular-nums}
+.f-lbl2{font-size:13px;color:var(--ink-2);line-height:1.35}
+.coins{display:flex;flex-direction:column;gap:6px}
+.coins p{font-size:14px;line-height:1.5;color:var(--ink-2)}
+.coins b{color:var(--ink);font-weight:600}
+.share-prev{background:var(--sunk);border-radius:16px;padding:10px;display:flex;flex-direction:column;gap:4px}
+.share-prev .msg{box-shadow:none}
+.next-up{font-size:13.5px;color:var(--ink-2);line-height:1.5}
+
+.toast{position:absolute;left:50%;top:70px;transform:translateX(-50%);z-index:30;background:var(--ink);color:var(--on-ink);font-size:14px;font-weight:600;padding:8px 14px;border-radius:999px;white-space:nowrap;animation:toast 2.6s ease both}
+@keyframes toast{0%{opacity:0;transform:translate(-50%,-8px)}10%,82%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,-8px)}}
+.pop{animation:pop .35s ease}
+@keyframes pop{0%{transform:scale(.8)}60%{transform:scale(1.12)}100%{transform:scale(1.04)}}
+
+/* ---------- responsive ---------- */
+@media (max-width:1140px){
+  .cols{grid-template-columns:minmax(330px,392px) minmax(0,1fr);gap:32px}
+  .thesis{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:20px 40px}
+  .journey{grid-template-columns:1fr 1fr}
+}
+@media (max-width:780px){
+  .stage{padding-block:12px 28px}
+  .topbar{padding-block:0 14px}
+  .brand-sub{display:none}
+  .cols{grid-template-columns:minmax(0,1fr);gap:20px}
+  .thesis{display:flex;flex-direction:column;gap:16px}
+  .thesis h1{font-size:28px}
+  .lede{font-size:15.5px}
+  .journey{display:flex;flex-wrap:wrap;gap:6px}
+  .journey button{width:auto;padding:5px 10px 5px 5px;border:1px solid var(--line);border-radius:999px;font-size:13.5px;gap:7px}
+  .j-n{width:22px;height:22px;font-size:12px}
+  .j-full{display:none}
+  .j-short{display:inline}
+  .device-wrap{max-width:480px;width:100%;margin:0 auto}
+  .device{height:auto;border-radius:24px;overflow:visible}
+  .screen{height:auto}
+  .app-head{border-radius:24px 24px 0 0}
+  .app-body{overflow:visible}
+  .app-foot{position:sticky;bottom:0;z-index:5;border-radius:0 0 24px 24px;padding-bottom:calc(14px + env(safe-area-inset-bottom,0px))}
+  .chat{min-height:0}
+  .sheet-wrap{position:fixed;padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+  .sheet{padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))}
+  .notes{position:static;padding-top:6px}
+  .toast{position:fixed;top:calc(16px + env(safe-area-inset-top,0px))}
+}
+@media (max-width:420px){
+  .stamp{width:118px;top:10px;right:8px}
+}
+@media (max-width:360px){
+  .board{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .seg button{font-size:13px}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
-  <div class="noise"></div>
-
-  <header class="nav-wrap">
-    <nav class="nav container">
-      <a class="brand" href="#top" aria-label="Shawarmazed home">
-        <img src="assets/shawarmazed-logo.png" alt="Shawarmazed logo" />
-      </a>
-      <div class="nav-links">
-        <a href="#menu">Menu</a>
-        <a href="#vibe">Our vibe</a>
-        <a href="#story">Our Story</a>
-      </div>
-      <button class="cart-btn" id="cartButton">
-        <span>Cart</span><span class="cart-count" id="cartCount">0</span>
-      </button>
+<div class="stage">
+  <header class="topbar">
+    <div class="brand">
+      <span class="wordmark">Pakka</span>
+      <span class="brand-sub">A concept for Scapia</span>
+    </div>
+    <nav class="stepper" aria-label="Move between screens">
+      <button class="icon-btn" id="prev" data-act="prev" data-k="prev" aria-label="Previous screen"></button>
+      <span class="step-label" id="stepLabel">Screen 1 of 6</span>
+      <button class="icon-btn" id="next" data-act="next" data-k="next" aria-label="Next screen"></button>
     </nav>
   </header>
 
-  <main id="top">
-    <section class="hero hero-video">
-      <video class="hero-bg-video" autoplay muted loop playsinline preload="metadata">
-        <source src="https://videos.pexels.com/video-files/25823076/11912123_2160_3840_60fps.mp4" type="video/mp4">
-      </video>
-      <div class="hero-video-overlay"></div>
-      <div class="container hero-grid">
-        <div class="hero-copy">
-          <div class="eyebrow">EXPECT THE UNEXPECTED.</div>
-          <h1>ONE BITE.<br><span>GET SHAWARMAZED.</span></h1>
-          <p class="hero-sub">Big flavours. Zero boring. Shawarmas made for cravings, screenshots and “bro, try this.”</p>
-          <div class="hero-actions">
-            <a class="btn primary" href="#menu">Order your fix <span>↗</span></a>
-            <a class="btn ghost" href="#vibe">Catch the vibe</a>
-          </div>
-          <div class="proof">
-            <div><strong>26+</strong><span>Shawarma Choices</span></div>
-            <div><strong>390+</strong><span>Locations Listed</span></div>
-            <div><strong>∞</strong><span>Main-Character Energy</span></div>
-          </div>
-        </div>
-        <div class="hero-art">
-          <div class="art-card">
-            <div class="stamp">THIS ONE<br>HITS DIFFERENT!</div>
-            <img src="assets/brand-packaging.png" alt="Shawarmazed packaging artwork" />
-          </div>
-          <div class="float-chip chip-one">SHEEESH.</div>
-          <div class="float-chip chip-two">10/10. WOULD BITE AGAIN.</div>
-        </div>
+  <div class="cols">
+    <aside class="thesis">
+      <div class="th-a">
+        <h1>Every “yes” in a group chat is secretly an “if”.</h1>
+        <p class="lede">Friend trips die in a deadlock of hidden conditions. Pakka lets each friend say “I’m in, if…”, holds their share without charging it, and books the trip the moment every “if” is true at the same time.</p>
       </div>
-    </section>
-
-    <section class="ticker" aria-label="brand phrases">
-      <div class="ticker-track">
-        <span>WAIT… WHAT?</span><b>✦</b><span>RIZZZ</span><b>✦</b><span>SAY LESS.</span><b>✦</b><span>THIS SLAPS.</span><b>✦</b>
-        <span>DRIPP</span><b>✦</b><span>INSTANT FAVE.</span><b>✦</b><span>NO CRUMBS.</span><b>✦</b><span>BRB, GETTING THAT.</span><b>✦</b>
+      <div class="th-b">
+        <dl class="pu">
+          <div><dt>Plan</dt><dd>A two-night Goa trip with college friends who now live in different cities.</dd></div>
+          <div><dt>User</dt><dd>The organiser, who usually pays the advance and then chases everyone for it.</dd></div>
+        </dl>
+        <ol class="journey" id="journey" aria-label="Screens in this prototype">
+          <li><button data-go="1" data-k="j1"><span class="j-n">1</span><span class="j-full">The group chat today</span><span class="j-short">Chat</span></button></li>
+          <li><button data-go="2" data-k="j2"><span class="j-n">2</span><span class="j-full">Pakka reads the chat</span><span class="j-short">Read</span></button></li>
+          <li><button data-go="3" data-k="j3"><span class="j-n">3</span><span class="j-full">The organiser sets the pact</span><span class="j-short">Pact</span></button></li>
+          <li><button data-go="4" data-k="j4"><span class="j-n">4</span><span class="j-full">Karan says “I’m in, if…”</span><span class="j-short">Pledge</span></button></li>
+          <li><button data-go="5" data-k="j5"><span class="j-n">5</span><span class="j-full">Friday, 8 PM</span><span class="j-short">Deadline</span></button></li>
+          <li><button data-go="6" data-k="j6"><span class="j-n">6</span><span class="j-full">It’s pakka</span><span class="j-short">Booked</span></button></li>
+        </ol>
+        <p class="try"><strong>Things to try.</strong> On screen 4, change Karan’s “if”. On screen 5, make Rahul drop out, then save the trip. On screen 2, paste your own group chat.</p>
       </div>
-    </section>
+    </aside>
 
-    <section class="menu-section" id="menu">
-      <div class="container">
-        <div class="section-head">
-          <div>
-            <span class="eyebrow">THE LINE-UP</span>
-            <h2>Pick your <span>plot twist.</span></h2>
-          </div>
-          <p>Classic, smoky, spicy, peppy, paneer, bowls — whatever mood you walked in with, we’ve got a shawarma for it.</p>
-        </div>
-
-        <div class="filters" id="filters">
-          <button class="filter active" data-filter="All">All</button>
-          <button class="filter" data-filter="Chicken">Chicken</button>
-          <button class="filter" data-filter="Paneer">Paneer</button>
-          <button class="filter" data-filter="Veg">Veg</button>
-          <button class="filter" data-filter="Bowl">Bowls</button>
-          <button class="filter" data-filter="Spicy">Spicy</button>
-        </div>
-
-        <div class="product-grid" id="productGrid"></div>
-      </div>
-    </section>
-
-    
-    <section class="post-menu-intro">
-      <div class="container">
-        <div class="post-menu-head">
-          <span class="eyebrow">POST-MENU ENERGY</span>
-          <h2>Okay, but why are we <span>this obsessed?</span></h2>
-          <p>Because Shawarmazed is not just about picking a shawarma. It’s about picking your mood, your sauce personality and your “I’m ordering this again” moment.</p>
-        </div>
-
-        <div class="chaos-strip">
-          <div class="chaos-card">
-            <span class="chaos-kicker">MOOD 01</span>
-            <h3>Smoky & chill</h3>
-            <p>Low drama. High flavour.</p>
-            <span class="chaos-word">SMOKY</span>
-          </div>
-          <div class="chaos-card featured">
-            <span class="chaos-kicker">MOOD 02</span>
-            <h3>Fiery main character</h3>
-            <p>Zero subtlety. Exactly the point.</p>
-            <span class="chaos-word">FIERY</span>
-          </div>
-          <div class="chaos-card">
-            <span class="chaos-kicker">MOOD 03</span>
-            <h3>Peppy chaos</h3>
-            <p>Bright, punchy, instantly addictive.</p>
-            <span class="chaos-word">PEPPY</span>
-          </div>
-        </div>
-
-        <div class="mini-marquee">
-          <div class="mini-marquee-track">
-            <span>ONE MORE BITE.</span><b>✦</b>
-            <span>MAKE IT SPICY.</span><b>✦</b>
-            <span>NO BORING ORDERS.</span><b>✦</b>
-            <span>GET SHAWARMAZED.</span><b>✦</b>
-            <span>ONE MORE BITE.</span><b>✦</b>
-            <span>MAKE IT SPICY.</span><b>✦</b>
-            <span>NO BORING ORDERS.</span><b>✦</b>
-            <span>GET SHAWARMAZED.</span><b>✦</b>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="vibe-section" id="vibe">
-      <div class="container vibe-grid">
-        <div class="vibe-card teal">
-          <span class="mini">01 / PICK</span>
-          <h3>Choose your chaos.</h3>
-          <p>Smoky? Peppy? Fiery? Paneer? Bowl? There are no wrong answers.</p>
-        </div>
-        <div class="vibe-card cream">
-          <span class="mini">02 / BITE</span>
-          <h3>First bite = plot twist.</h3>
-          <p>Big sauce energy, packed fillings and the kind of flavour that interrupts conversations.</p>
-        </div>
-        <div class="vibe-card red">
-          <span class="mini">03 / REPEAT</span>
-          <h3>Now you're Shawarmazed.</h3>
-          <p>Congratulations. Your “usual order” has officially entered a new era.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="about-section" id="about">
-      <div class="container about-grid">
-        <div class="about-copy">
-          <span class="eyebrow">WHY SHAWARMAZED?</span>
-          <h2>Not a wrap.<br><span>A whole mood.</span></h2>
-          <p>Shawarmazed is built around one simple idea: shawarma should never feel routine. We take familiar favourites and hit them with bolder sauces, louder flavour combinations and a brand personality that’s impossible to scroll past.</p>
-          <div class="feature-row">
-            <div><strong>Made for cravings</strong><span>Fast, filling, flavour-first.</span></div>
-            <div><strong>Built for choice</strong><span>Chicken, paneer, falafel & bowls.</span></div>
-            <div><strong>Always a little extra</strong><span>Because basic is not the brief.</span></div>
-          </div>
-        </div>
-        <div class="quote-card">
-          <div class="quote-mark">“</div>
-          <p>EXPECT THE<br>UNEXPECTED.</p>
-          <span>BE SHAWARMAZED.</span>
-        </div>
-      </div>
-    </section>
-
-
-    <section class="story-section" id="story">
-      <div class="container story-grid">
-        <div class="story-visual">
-          <div class="story-orbit orbit-one"></div>
-          <div class="story-orbit orbit-two"></div>
-          <div class="story-card main-story-card">
-            <span class="eyebrow">OUR STORY</span>
-            <div class="story-big">SHAWARMA<br>+ AMAZED</div>
-            <p>That’s the whole idea.</p>
-          </div>
-          <div class="story-chip chip-a">NO BORING BITES.</div>
-          <div class="story-chip chip-b">EXPECT THE UNEXPECTED.</div>
-        </div>
-        <div class="story-copy">
-          <span class="eyebrow">HOW IT STARTED</span>
-          <h2>We wanted shawarma to feel <span>fun again.</span></h2>
-          <p>Shawarmazed was imagined as a shawarma-first brand with more personality, more flavour and none of the usual “same wrap, different board” energy.</p>
-          <p>So we built a line-up around bold combinations — smoky, peppy, fiery, BBQ, chipotle, paneer, falafel and bowls — and wrapped it inside a brand that talks like the people eating it.</p>
-          <div class="story-points">
-            <div><strong>Shawarma-first</strong><span>No distractions. This is the main event.</span></div>
-            <div><strong>Made to surprise</strong><span>Familiar cravings with a louder twist.</span></div>
-            <div><strong>Made for now</strong><span>Fast, social, playful and unapologetically Gen Z.</span></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="cta-section">
-      <div class="container cta-box">
-        <div>
-          <span class="eyebrow light">HUNGRY YET?</span>
-          <h2>Don't overthink it.<br>Order the shawarma.</h2>
-        </div>
-        <a href="#menu" class="btn cream-btn">Find your favourite ↗</a>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <div class="container footer-grid">
-      <img src="assets/shawarmazed-logo.png" alt="Shawarmazed" />
-      <div class="footer-copy">
-        <strong>THIS ONE HITS DIFFERENT.</strong>
-        <span>© 2026 Shawarmazed. Demo brand website.</span>
-      </div>
-      <div class="socials">
-        <a href="#">Instagram</a>
-        <a href="#">Contact</a>
-      </div>
+    <div class="device-wrap">
+      <p class="persona" id="persona"></p>
+      <div class="device" id="app"></div>
     </div>
-  </footer>
 
-  <aside class="cart-drawer" id="cartDrawer">
-    <div class="cart-head">
-      <div>
-        <span class="eyebrow">YOUR ORDER</span>
-        <h3>Good choices only.</h3>
-      </div>
-      <button class="icon-btn" id="closeCart" aria-label="Close cart">×</button>
-    </div>
-    <div class="cart-items" id="cartItems"></div>
-    <div class="cart-empty" id="cartEmpty">
-      <div class="empty-emoji">🌯</div>
-      <strong>Cart looking a little empty.</strong>
-      <span>Fix that immediately.</span>
-    </div>
-    <div class="cart-bottom">
-      <div class="total-row"><span>Total</span><strong id="cartTotal">₹0</strong></div>
-      <button class="btn primary full" id="checkoutBtn">Checkout →</button>
-      <small>Demo checkout — no payment is processed.</small>
-    </div>
-  </aside>
-  <div class="overlay" id="overlay"></div>
-
-  <div class="checkout-modal" id="checkoutModal">
-    <div class="checkout-card">
-      <button class="icon-btn modal-close" id="closeCheckout">×</button>
-      <span class="eyebrow">CHECKOUT</span>
-      <h3>Almost Shawarmazed.</h3>
-      <form id="checkoutForm">
-        <div class="form-grid">
-          <label>Full name<input required name="name" placeholder="Your name" /></label>
-          <label>Phone<input required name="phone" placeholder="+91" pattern="[0-9+ ]{8,15}" /></label>
-          <label class="wide">Delivery address<textarea required name="address" placeholder="House / hostel / office, area, landmark"></textarea></label>
-          <label>Payment
-            <select name="payment">
-              <option>Cash on Delivery</option>
-              <option>UPI on Delivery</option>
-            </select>
-          </label>
-          <label>Notes<input name="notes" placeholder="Extra spicy? No onions?" /></label>
-        </div>
-        <div class="order-preview" id="orderPreview"></div>
-        <button class="btn primary full" type="submit">Place demo order →</button>
-      </form>
-    </div>
+    <aside class="notes" id="notes" aria-live="polite"></aside>
   </div>
 
-  <div class="toast" id="toast"></div>
+  <footer class="credit">Concept prototype by Nandi Anuraag Vishwanath for the Scapia product internship assignment. Not an official Scapia product. The people, chat, prices and payments are made up for this demo, and no money moves anywhere.</footer>
+</div>
 
-  <script>
-    window.SHAWARMAZED_PRODUCTS = [{"name": "Classic Peppy Chicken Shawarma", "price": 169, "cat": "Chicken", "tag": "Peppy", "spice": 1, "img": "https://snapcalorie-webflow-website.s3.us-east-2.amazonaws.com/media/food_pics_v2/medium/shawerma_sandwich.jpg"}, {"name": "Classic Smoky Chicken Shawarma", "price": 169, "cat": "Chicken", "tag": "Smoky", "spice": 1, "img": "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy%2Cf_auto%2Cq_auto/FOOD_CATALOG/IMAGES/CMS/2025/6/15/60b00651-7282-44d3-91b0-a4f5f7f6e281_a02a7de2-73c3-495c-a32e-351f9467bc6e.jpg"}, {"name": "Paneer Tikka Shawarma", "price": 159, "cat": "Paneer", "tag": "Tikka", "spice": 1, "img": "https://coox-new.s3.ap-south-1.amazonaws.com/images/d/dishes/Paneer%20Shawarma-28-dish-img.jpeg?v=1761996283179"}, {"name": "Special Smoky Chicken Shawarma", "price": 199, "cat": "Chicken", "tag": "Special", "spice": 1, "img": "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy%2Cf_auto%2Cq_auto/FOOD_CATALOG/IMAGES/CMS/2025/6/15/60b00651-7282-44d3-91b0-a4f5f7f6e281_a02a7de2-73c3-495c-a32e-351f9467bc6e.jpg"}, {"name": "Special Peppy Chicken Shawarma", "price": 199, "cat": "Chicken", "tag": "Special", "spice": 2, "img": "https://snapcalorie-webflow-website.s3.us-east-2.amazonaws.com/media/food_pics_v2/medium/shawerma_sandwich.jpg"}, {"name": "Spicy Chicken Shawarma Bowl", "price": 219, "cat": "Bowl", "tag": "Spicy", "spice": 3, "img": "https://myrecipespace.com/wp-content/uploads/2025/01/Image_3-126.png"}, {"name": "Sizzled Falafel Shawarma", "price": 149, "cat": "Veg", "tag": "Falafel", "spice": 1, "img": "https://tb-static.uber.com/prod/image-proc/processed_images/ba1e811d16d648d0b97470701dadda27/58f691da9eaef86b0b51f9b2c483fe63.jpeg"}, {"name": "Classic Chicken Shawarma Bowl", "price": 209, "cat": "Bowl", "tag": "Classic", "spice": 1, "img": "https://myrecipespace.com/wp-content/uploads/2025/01/Image_3-126.png"}, {"name": "Smoky BBQ Chicken Shawarma", "price": 189, "cat": "Chicken", "tag": "BBQ", "spice": 1, "img": "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy%2Cf_auto%2Cq_auto/FOOD_CATALOG/IMAGES/CMS/2025/6/15/60b00651-7282-44d3-91b0-a4f5f7f6e281_a02a7de2-73c3-495c-a32e-351f9467bc6e.jpg"}, {"name": "Spicy Chipotle Chicken Shawarma", "price": 189, "cat": "Chicken", "tag": "Chipotle", "spice": 3, "img": "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy%2Cf_auto%2Cq_auto/FOOD_CATALOG/IMAGES/CMS/2025/9/4/6259617e-8c2a-4379-afc4-db5e71e0bf6d_ed042067-b71d-4f7f-8171-9803cd2c048e.jpg"}, {"name": "Fiery Schezwan Chicken Shawarma", "price": 189, "cat": "Chicken", "tag": "Schezwan", "spice": 3, "img": "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy%2Cf_auto%2Cq_auto/FOOD_CATALOG/IMAGES/CMS/2025/9/4/6259617e-8c2a-4379-afc4-db5e71e0bf6d_ed042067-b71d-4f7f-8171-9803cd2c048e.jpg"}, {"name": "Spicy Chipotle Paneer Shawarma", "price": 179, "cat": "Paneer", "tag": "Chipotle", "spice": 3, "img": "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy%2Cf_auto%2Cq_auto/FOOD_CATALOG/IMAGES/CMS/2026/2/23/9fef6d27-3455-4fca-9d65-8ed726e8e2a7_c40cce9f-6975-4268-b8b8-fc39b5603337.png_compressed"}, {"name": "Smoky BBQ Paneer Shawarma", "price": 179, "cat": "Paneer", "tag": "BBQ", "spice": 1, "img": "https://coox-new.s3.ap-south-1.amazonaws.com/images/d/dishes/Paneer%20Shawarma-28-dish-img.jpeg?v=1761996283179"}, {"name": "Fiery Schezwan Paneer Shawarma", "price": 179, "cat": "Paneer", "tag": "Schezwan", "spice": 3, "img": "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy%2Cf_auto%2Cq_auto/FOOD_CATALOG/IMAGES/CMS/2026/2/23/9fef6d27-3455-4fca-9d65-8ed726e8e2a7_c40cce9f-6975-4268-b8b8-fc39b5603337.png_compressed"}];
-  </script>
-  <script src="script.js"></script>
+<script>
+(function(){
+'use strict';
+const RM = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+const $ = (s, r) => (r || document).querySelector(s);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = n => '₹' + Math.round(n).toLocaleString('en-IN');
+const cap = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+const andList = a => a.length <= 1 ? (a[0] || '') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1];
+
+const IC = {
+  left:'<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5L7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  right:'<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7.5 4.5L13 10l-5.5 5.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  lock:'<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6.5 9V7a3.5 3.5 0 0 1 7 0v2" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="4.5" y="9" width="11" height="8" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>',
+  check:'<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3.2L15 7" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  x:'<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6.5 6.5l7 7M13.5 6.5l-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+  link:'<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M8.3 11.7l3.4-3.4M7.6 9.2l-1.7 1.7a2.6 2.6 0 0 0 3.7 3.7l1.7-1.7M12.4 10.8l1.7-1.7a2.6 2.6 0 0 0-3.7-3.7L8.7 7.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  dot:'<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="3" fill="currentColor"/></svg>',
+  phone:'<svg viewBox="0 0 20 20" aria-hidden="true"><rect x="6" y="2.5" width="8" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 15h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+  shield:'<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.8l5.5 2v4.6c0 3.6-2.4 6.2-5.5 7.6-3.1-1.4-5.5-4-5.5-7.6V4.8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M7.4 10l1.9 1.9 3.4-3.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  beach:'<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="27" cy="13" r="5" fill="var(--if)"/><path d="M4 26c4-3 8-3 12 0s8 3 12 0 8-3 8-3" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linecap="round"/><path d="M4 32c4-3 8-3 12 0s8 3 12 0 8-3 8-3" fill="none" stroke="var(--ink-3)" stroke-width="2" stroke-linecap="round"/></svg>'
+};
+
+/* ================= the sample chat (illustrative) ================= */
+const SAMPLE_CHAT = [
+  '12/10/26, 9:02 pm - Anu: Goa, Dec 11–13? Found a villa in Assagao. ₹42,000 for 2 nights, sleeps 8 🌴',
+  '12/10/26, 9:03 pm - Anu: POLL:',
+  'Goa, Dec 11–13?',
+  'OPTION: Yes (6 votes)',
+  'OPTION: No (1 vote)',
+  '12/10/26, 9:10 pm - Rahul: pakka aa raha hu 🔥',
+  '12/10/26, 9:14 pm - Karan: Rahul aa raha toh main bhi in',
+  '12/10/26, 9:31 pm - Sneha: 7k ke andar ho toh I\'m in, warna mushkil hai',
+  '12/10/26, 9:40 pm - Arjun: if 5+ log aa rahe hain then I\'m in',
+  '12/10/26, 10:05 pm - Priya: Meera aa rahi hai toh pakka',
+  '12/10/26, 10:07 pm - Meera: Priya aaye toh main bhi 😅',
+  '12/10/26, 11:48 pm - Vikram: Dec mein cousin ki shaadi hai, can\'t make it 😞',
+  '14/10/26, 8:15 pm - Anu: Villa needs ₹20,000 advance by Friday. Who\'s sending?',
+  '16/10/26, 6:52 pm - Karan: someone book na, I\'ll send later',
+  '16/10/26, 11:20 pm - Anu: guys??'
+].join('\n');
+
+/* ================= chat reader (rules standing in for an on-device model) ================= */
+const VERBS = 'comes|is coming|joins|goes|is going|is in|aaye|aaya|aayega|aayegi|aa raha|aa rahi|aata|aati|aa jaye|aa gaya|aa gayi|ja raha|ja rahi|chale|chalega|chalegi';
+const RX = {
+  line: /^\[?(\d{1,2}[\/.-]\d{1,2}[\/.-]\d{2,4}),?\s+(\d{1,2}[:.]\d{2}(?:[:.]\d{2})?(?:\s?[ap]\.?\s?m\.?)?)\]?\s*(?:[-–]\s*)?([^:]{1,40}?):\s?(.*)$/i,
+  simple: /^([A-Za-zÀ-ɏ][A-Za-z0-9À-ɏ .'_-]{0,30}?):\s+(.+)$/,
+  personA: new RegExp('\\b(?:if|agar|only if|bas)\\s+([a-z]+)\\s+(?:bhi\\s+)?(?:' + VERBS + ')\\b'),
+  personB: new RegExp('\\b([a-z]+)\\s+(?:bhi\\s+)?(?:' + VERBS + ')(?:\\s+(?:hai|he|h|hain))?\\s*,?\\s+(?:toh|to|then|tab)\\b'),
+  priceA: /(rs\.?\s?|₹\s?|inr\s?)?(\d+(?:[.,]\d+)?)\s?(k|thousand)?\s*(?:ke andar|ke under|tak|ya kam|or less|max|se kam|ke neeche)\b/,
+  priceB: /\b(?:under|below|less than|within|max|budget|upto|up to|at most|not more than)\s*(?:of\s*)?(rs\.?\s?|₹\s?|inr\s?)?(\d+(?:[.,]\d+)?)\s?(k|thousand)?/,
+  countIf: /\b(?:if|agar)\s+(\d{1,2})\s?\+?\s*(?:or more\s+)?(?:log|people|ppl|jan|members|bande|of us|friends|logon)\b/,
+  countA: /\b(\d{1,2})\s?(\+)?\s*(?:or more\s+)?(?:log|people|ppl|jan|members|bande|of us|friends|logon)\b/,
+  countB: /\b(?:at least|atleast|kam se kam|minimum)\s*(\d{1,2})\b/,
+  condWord: /\b(?:if|agar|toh|then|only)\b/,
+  wait: /\b(?:can't wait|cant wait)\b/,
+  out: /\b(?:can't|cant|cannot|can not|won't be able|not coming|not going|nahi aa|nahi aaunga|nahi aaungi|nahi aa paunga|nahi aa paungi|nahi ho payega|count me out|i'm out|im out|not possible)\b/,
+  inn: /\b(?:pakka|i'm in|im in|count me in|in hai|aa raha|aa rahi|aaunga|aaungi|chalo|let's go|lets go|confirmed?|i'll come|ill come|coming|i'm game|im game)\b/,
+  maybe: /\b(?:maybe|may be|dekhte|dekhenge|shayad|depends|let me check|will confirm|will let you know|not sure|idk|tentative|try karunga|try karungi|pata nahi|sochta|sochti)\b/,
+  pollOpt: /OPTION:\s*(.+?)\s*\((\d+)\s*votes?\)/gi,
+  yes: /^(?:yes|haan|ha|in|pakka|i'm in|going|count me in)\b/i
+};
+function normalize(s){
+  return String(s).replace(/[‎‏‪-‮]/g, '').replace(/[’‘]/g, "'").replace(/[“”]/g, '"');
+}
+function readMessage(text, known, self){
+  const t = ' ' + text.toLowerCase().replace(/\s+/g, ' ') + ' ';
+  const hits = [];
+  let person = null, maxShare = null, minPeople = null, m;
+  for (const re of [RX.personA, RX.personB]){
+    m = t.match(re);
+    if (m && known.has(m[1]) && m[1] !== String(self).toLowerCase()){ person = known.get(m[1]); hits.push(m[0].trim()); break; }
+  }
+  for (const re of [RX.priceA, RX.priceB]){
+    m = t.match(re);
+    if (m){
+      let v = parseFloat(m[2].replace(/,/g, ''));
+      if (m[3]) v *= 1000;
+      if ((m[1] || m[3] || v >= 1000) && v >= 1000 && v <= 200000){ maxShare = Math.round(v); hits.push(m[0].trim()); break; }
+    }
+  }
+  m = t.match(RX.countIf);
+  if (m){ minPeople = +m[1]; hits.push(m[0].trim()); }
+  else {
+    m = t.match(RX.countA);
+    if (m && (m[2] || RX.condWord.test(t))){ minPeople = +m[1]; hits.push(m[0].trim()); }
+    else { m = t.match(RX.countB); if (m){ minPeople = +m[1]; hits.push(m[0].trim()); } }
+  }
+  if (minPeople !== null && (minPeople < 2 || minPeople > 30)){ minPeople = null; hits.pop(); }
+  let status = null;
+  if (person || maxShare || minPeople) status = 'if';
+  else if (RX.wait.test(t)) status = 'in';
+  else if (RX.out.test(t)) status = 'out';
+  else if (RX.inn.test(t)) status = 'in';
+  else if (RX.maybe.test(t)) status = 'maybe';
+  return {status, person, maxShare, minPeople, hits};
+}
+function parseChat(raw){
+  const lines = normalize(raw).split(/\r?\n/);
+  const msgs = [];
+  for (const line of lines){
+    let m = line.match(RX.line);
+    if (m){ msgs.push({date:m[1], time:m[2].replace(/\s+/g, ' ').trim(), who:m[3].trim(), text:m[4]}); continue; }
+    m = line.match(RX.simple);
+    if (m && !/^(poll|option)$/i.test(m[1].trim())){ msgs.push({who:m[1].trim(), text:m[2]}); continue; }
+    if (msgs.length && line.trim()) msgs[msgs.length - 1].text += '\n' + line.trim();
+  }
+  const known = new Map();
+  msgs.forEach(x => { x.first = x.who.split(/\s+/)[0]; const k = x.first.toLowerCase(); if (!known.has(k)) known.set(k, x.first); });
+  const people = new Map();
+  let poll = null;
+  for (const x of msgs){
+    if (!people.has(x.first)) people.set(x.first, {name:x.first, status:null, person:null, maxShare:null, minPeople:null, quote:'', hits:[], organiser:false});
+    const rec = people.get(x.first);
+    if (/^POLL:/i.test(x.text)){
+      const opts = []; let mm; RX.pollOpt.lastIndex = 0;
+      while ((mm = RX.pollOpt.exec(x.text))) opts.push({label:mm[1], votes:+mm[2]});
+      x.poll = {q:(x.text.split('\n')[1] || '').trim(), opts};
+      x.hits = [];
+      if (!poll){ poll = x.poll; rec.organiser = true; }
+      continue;
+    }
+    const r = readMessage(x.text, known, x.first);
+    x.hits = r.hits;
+    if (r.status === 'if' && rec.status === 'if'){
+      /* a second "if" from the same person adds to the first one */
+      Object.assign(rec, {person:r.person || rec.person, maxShare:r.maxShare || rec.maxShare, minPeople:r.minPeople || rec.minPeople, quote:rec.quote + '\n' + x.text, hits:rec.hits.concat(r.hits)});
+    } else if (r.status){
+      Object.assign(rec, {status:r.status, person:r.person, maxShare:r.maxShare, minPeople:r.minPeople, quote:x.text, hits:r.hits});
+    }
+  }
+  const list = [...people.values()];
+  list.forEach(p => { if (p.organiser && !p.status) p.status = 'in'; });
+  const byName = {}; list.forEach(p => { byName[p.name] = p; });
+  const yes = poll ? poll.opts.filter(o => RX.yes.test(o.label)).reduce((a, o) => a + o.votes, 0) : null;
+  const votes = poll ? poll.opts.reduce((a, o) => a + o.votes, 0) : null;
+  return {msgs, people:list, byName, poll, yes, no: poll ? votes - yes : null, ifCount: list.filter(p => p.status === 'if').length};
+}
+function highlight(text, hits){
+  const low = text.toLowerCase();
+  const spans = [];
+  (hits || []).forEach(h => { const i = low.indexOf(h); if (i >= 0) spans.push([i, i + h.length]); });
+  spans.sort((a, b) => a[0] - b[0]);
+  let out = '', pos = 0;
+  for (const [a, b] of spans){ if (a < pos) continue; out += esc(text.slice(pos, a)) + '<mark class="ifm">' + esc(text.slice(a, b)) + '</mark>'; pos = b; }
+  return out + esc(text.slice(pos));
+}
+
+/* ================= world ================= */
+const PARSED = parseChat(SAMPLE_CHAT);
+const ORG = 'Anu';
+const NAMES = PARSED.people.map(p => p.name);
+const STAYS = [
+  {name:'Villa in Assagao', short:'Assagao villa', area:'North Goa', total:42000, sleeps:8},
+  {name:'Homestay in Siolim', short:'Siolim homestay', area:'North Goa', total:35000, sleeps:8}
+];
+const DEADLINES = [
+  {chip:'Wed, Oct 28', short:'Wed, 8 PM', long:'Wed, Oct 28, 8 PM'},
+  {chip:'Fri, Oct 30', short:'Fri, 8 PM', long:'Fri, Oct 30, 8 PM'},
+  {chip:'Sun, Nov 1', short:'Sun, 8 PM', long:'Sun, Nov 1, 8 PM'}
+];
+const PAY = {Anu:'card', Rahul:'card', Karan:'card', Sneha:'upi', Arjun:'upi', Priya:'card', Meera:'upi', Vikram:'upi'};
+
+function freshState(){
+  const k = PARSED.byName.Karan;
+  return {
+    screen:1, minPeople:5, dl:1, stay:0, rahulOut:false, showIfs:true,
+    karan:{mode: k.status === 'out' ? 'out' : (k.status === 'if' ? 'if' : 'in'), person:k.person || null, maxShare:k.maxShare || null, minPeople:k.minPeople || null, pay:'card'},
+    karanPledged:false, sheet:false, tryOpen:false, tryText:SAMPLE_CHAT, tryResult:null,
+    toast:null, stampAnim:false, run:null
+  };
+}
+let st = freshState();
+
+const nm = n => n === ORG ? 'You' : n;
+const initials = n => n === ORG ? 'You' : n.slice(0, 2);
+const holdAmount = () => Math.ceil(STAYS[0].total / st.minPeople);
+const payOf = n => n === 'Karan' ? st.karan.pay : PAY[n];
+
+function condText(p, pov){
+  const parts = [];
+  if (p.person) parts.push(p.person === ORG && pov !== 'raw' && pov !== 'friend' ? 'if you come' : 'if ' + p.person + ' comes');
+  if (p.maxShare) parts.push('if it’s ' + fmt(p.maxShare) + ' or less');
+  if (p.minPeople) parts.push('if ' + p.minPeople + '+ go');
+  return parts.join(' and ');
+}
+
+/* ================= the pledge engine ================= */
+function pledgeMap(){
+  const P = {};
+  for (const p of PARSED.people){
+    let o = {status: p.organiser ? 'in' : (p.status || 'none'), person:p.person || null, maxShare:p.maxShare || null, minPeople:p.minPeople || null, quote:p.quote};
+    if (p.name === 'Karan'){
+      const k = st.karan;
+      o = Object.assign({}, o, {
+        status: k.mode === 'out' ? 'out' : (k.mode === 'in' ? 'in' : 'if'),
+        person: k.mode === 'if' ? k.person : null,
+        maxShare: k.mode === 'if' ? k.maxShare : null,
+        minPeople: k.mode === 'if' ? k.minPeople : null
+      });
+      if (o.status === 'if' && !o.person && !o.maxShare && !o.minPeople) o.status = 'in';
+    }
+    if (p.name === 'Rahul' && st.rahulOut) o = Object.assign({}, o, {status:'out'});
+    P[p.name] = o;
+  }
+  return P;
+}
+function holds(p, set, total){
+  if (p.status === 'in') return true;
+  if (p.status !== 'if') return false;
+  const n = set.size;
+  if (p.person && !set.has(p.person)) return false;
+  if (p.maxShare && Math.ceil(total / n) > p.maxShare) return false;
+  if (p.minPeople && n < p.minPeople) return false;
+  return true;
+}
+function failReason(name, p, set, total){
+  const who = nm(name), n = set.size;
+  if (p.person && !set.has(p.person)) return nm(p.person) + (p.person === ORG ? ' aren’t' : ' isn’t') + ' going, so ' + who + '’s “' + condText(p) + '” fails.';
+  if (p.maxShare && Math.ceil(total / n) > p.maxShare) return 'With ' + n + ' people it’s ' + fmt(Math.ceil(total / n)) + ' each, above ' + who + '’s limit of ' + fmt(p.maxShare) + '.';
+  if (p.minPeople && n < p.minPeople) return 'Only ' + n + ' would go, and ' + who + ' wanted ' + p.minPeople + '+.';
+  return who + '’s “if” isn’t met.';
+}
+/* Greatest fixed point: start from everyone who pledged and drop anyone whose "if" fails, until stable.
+   All conditions get easier as the group grows, so the result is the largest group in which every "if" holds at once. */
+function resolve(P, total, min){
+  const pledged = NAMES.filter(n => P[n].status === 'in' || P[n].status === 'if');
+  const S = new Set(pledged);
+  const drops = [];
+  for (;;){
+    const bad = NAMES.find(n => S.has(n) && !holds(P[n], S, total));
+    if (!bad) break;
+    drops.push({name:bad, text:failReason(bad, P[bad], S, total)});
+    S.delete(bad);
+  }
+  return {P, total, min, pledged, S, drops, locked: S.size >= min && S.size > 0, share: S.size ? Math.ceil(total / S.size) : 0};
+}
+function resolveNow(){ return resolve(pledgeMap(), STAYS[st.stay].total, st.minPeople); }
+function* combos(arr, k, start, pre){
+  start = start || 0; pre = pre || [];
+  if (pre.length === k){ yield pre; return; }
+  for (let i = start; i < arr.length; i++) yield* combos(arr, k, i + 1, pre.concat([arr[i]]));
+}
+const prio = p => p.maxShare ? 2 : (p.minPeople ? 1 : 0);
+function baseText(names){
+  const one = names.length === 1 && names[0] !== ORG;
+  return andList(names.map(nm)) + (one ? ' is' : ' are') + ' in with no “if”.';
+}
+function joinReason(name, p, set, total){
+  const bits = [], n = set.size;
+  if (p.person) bits.push(nm(p.person) + (p.person === ORG ? ' are' : ' is') + ' in');
+  if (p.minPeople) bits.push(n + ' are going');
+  if (p.maxShare) bits.push('the share is ' + fmt(Math.ceil(total / n)));
+  return cap(andList(bits)) + ', so ' + nm(name) + '’s “' + condText(p) + '” is met.';
+}
+function pactReason(group, P, set, total){
+  const mutual = group.length === 2 && P[group[0]].person === group[1] && P[group[1]].person === group[0] && !P[group[0]].maxShare && !P[group[1]].maxShare && !P[group[0]].minPeople && !P[group[1]].minPeople;
+  const g = group.slice().sort((x, y) => NAMES.indexOf(x) - NAMES.indexOf(y));
+  if (mutual){
+    const [a, b] = g;
+    return nm(a) + ' said “if ' + b + ' comes” and ' + nm(b) + ' said “if ' + a + ' comes”. A group chat can’t break that loop. Both are true together, so both are in.';
+  }
+  const n = set.size, two = g.length === 2;
+  return andList(g.map(nm)) + ' need each other. With ' + (two ? 'both' : 'all') + ' of them it’s ' + n + ' people at ' + fmt(Math.ceil(total / n)) + ' each, which meets ' + (two ? 'both' : 'every') + ' “if”, so they join together.';
+}
+function joinSteps(res){
+  const {P, S, total} = res;
+  const members = NAMES.filter(n => S.has(n));
+  const shown = new Set(), steps = [];
+  const base = members.filter(n => P[n].status === 'in');
+  if (base.length){ base.forEach(n => shown.add(n)); steps.push({kind:'base', names:base, n:shown.size, text:baseText(base)}); }
+  let guard = 0;
+  while (shown.size < S.size && guard++ < 20){
+    const rest = members.filter(n => !shown.has(n)).sort((a, b) => prio(P[a]) - prio(P[b]));
+    const one = rest.find(n => { const t = new Set(shown); t.add(n); return holds(P[n], t, total); });
+    if (one){ shown.add(one); steps.push({kind:'join', names:[one], n:shown.size, text:joinReason(one, P[one], shown, total)}); continue; }
+    let group = null;
+    for (let k = 2; k <= rest.length && !group; k++){
+      for (const c of combos(rest, k)){
+        const t = new Set(shown); c.forEach(x => t.add(x));
+        if (c.every(x => holds(P[x], t, total))){ group = c; break; }
+      }
+    }
+    if (!group) group = rest;
+    group.forEach(n => shown.add(n));
+    steps.push({kind:'pact', names:group, n:shown.size, text:pactReason(group, P, shown, total)});
+  }
+  return steps;
+}
+function successSteps(res){
+  const steps = joinSteps(res);
+  res.pledged.filter(n => !res.S.has(n)).forEach(n => {
+    const t = new Set(res.S); t.add(n);
+    steps.push({kind:'released', names:[n], text:failReason(n, res.P[n], t, res.total) + ' ' + nm(n) + '’s hold is released.'});
+  });
+  steps.push({kind:'lock', names:[], n:res.S.size});
+  return steps;
+}
+function failSteps(res){
+  const steps = [];
+  if (st.rahulOut) steps.push({kind:'trigger', names:['Rahul'], text:'Rahul can’t come after all.'});
+  const n0 = res.pledged.length;
+  steps.push({kind:'start', names:res.pledged.slice(), n:n0, text: n0 + (n0 === 1 ? ' person has' : ' people have') + ' pledged. If all of them go, it’s ' + fmt(Math.ceil(res.total / n0)) + ' each.'});
+  let n = n0;
+  res.drops.forEach(d => { n -= 1; steps.push({kind:'drop', names:[d.name], n, text:d.text}); });
+  steps.push({kind:'nolock', names:[], n:res.S.size});
+  return steps;
+}
+function findFix(){
+  const cur = STAYS[st.stay].total;
+  for (let i = 0; i < STAYS.length; i++){
+    if (STAYS[i].total >= cur) continue;
+    const r = resolve(pledgeMap(), STAYS[i].total, st.minPeople);
+    if (r.locked) return {i, r};
+  }
+  return null;
+}
+
+/* ================= screens ================= */
+function pkHead(ctx){
+  return '<div class="app-head"><span class="wordmark">Pakka</span><span class="ctx">' + ctx + '</span></div>';
+}
+function dayLabel(d){
+  const p = d.split(/[\/.-]/).map(Number);
+  let y = p[2]; if (y < 100) y += 2000;
+  const dt = new Date(y, p[1] - 1, p[0]);
+  if (isNaN(dt)) return d;
+  return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][dt.getDay()] + ', ' + dt.getDate() + ' ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][dt.getMonth()];
+}
+
+function s1(){
+  let chat = '', last = null;
+  PARSED.msgs.forEach(x => {
+    if (x.date && x.date !== last){ chat += '<p class="day">' + esc(dayLabel(x.date)) + '</p>'; last = x.date; }
+    const me = x.first === ORG;
+    const who = me ? '' : '<span class="who">' + esc(x.first) + '</span>';
+    if (x.poll){
+      const tot = x.poll.opts.reduce((a, o) => a + o.votes, 0) || 1;
+      chat += '<div class="msg me poll"><p class="poll-k">Poll</p><p class="poll-q">' + esc(x.poll.q) + '</p>' +
+        x.poll.opts.map(o => '<div class="opt"><span>' + esc(o.label) + '</span><span>' + o.votes + '</span><span class="bar"><i style="width:' + Math.round(o.votes / tot * 100) + '%"></i></span></div>').join('') +
+        '<p class="poll-n">7 of 8 voted<span class="tm">' + esc(x.time) + '</span></p></div>';
+      return;
+    }
+    const body = highlight(x.text, x.hits);
+    chat += '<div class="msg' + (me ? ' me' : '') + '">' + who + '<span class="tm">' + esc(x.time || '') + '</span>' + body + '</div>';
+    if (/advance/i.test(x.text)) chat += '<p class="receipt">Read by 7</p>';
+  });
+  return '<div class="screen">' +
+    '<div class="app-head chat-head"><span class="back">' + IC.left + '</span><span class="g-av" aria-hidden="true">Goa</span>' +
+      '<div class="g-meta"><p class="g-title">Goa Dec plan 🌴</p><p class="g-sub">You, Rahul, Karan, Sneha, Arjun, Priya, Meera, Vikram</p></div></div>' +
+    '<div class="app-body">' +
+      '<div class="strip"><div class="stat"><span class="s-lbl">Poll</span><span class="s-val">' + PARSED.yes + ' yes</span></div>' +
+        '<div class="stat zero"><span class="s-lbl">Advance sent</span><span class="s-val">₹0</span></div>' +
+        '<label class="switch"><input type="checkbox" id="sw-ifs" data-k="sw-ifs"' + (st.showIfs ? ' checked' : '') + '><span class="track" aria-hidden="true"></span><span>Show the ifs (' + PARSED.ifCount + ')</span></label></div>' +
+      '<div class="chat' + (st.showIfs ? '' : ' plain') + '">' + chat + '</div>' +
+    '</div>' +
+    '<div class="app-foot"><button class="btn btn-primary" data-act="go" data-to="2" data-k="s1-cta">Make it pakka</button><p class="foot-note">Shares this chat with Pakka on your phone</p></div>' +
+  '</div>';
+}
+
+function stanceText(p, pov){
+  if (p.status === 'in') return p.organiser ? 'In, started the poll' : 'In';
+  if (p.status === 'if') return 'In, ' + condText(p, pov);
+  if (p.status === 'out') return 'Can’t make it';
+  if (p.status === 'maybe') return 'Maybe';
+  return 'No answer yet';
+}
+const pillClass = s => s === 'in' ? 'in' : s === 'if' ? 'if' : s === 'out' ? 'out' : 'maybe';
+function personRow(p, pov){
+  const name = pov === 'org' && p.name === ORG ? 'You' : p.name;
+  const quote = p.quote ? '<p class="p-quote">“' + highlight(p.quote, p.hits) + '”</p>' : (p.organiser ? '<p class="p-quote">Started the plan and the poll</p>' : '');
+  return '<li class="person"><span class="av" aria-hidden="true">' + esc(pov === 'org' ? initials(p.name) : p.name.slice(0, 2)) + '</span><div class="p-main"><div class="p-top"><span class="p-name">' + esc(name) + '</span><span class="pill ' + pillClass(p.status) + '">' + esc(stanceText(p, pov)) + '</span></div>' + quote + '</div></li>';
+}
+function tryBlock(){
+  if (!st.tryOpen) return '<button class="btn btn-quiet" data-act="try-open" data-k="try-open">Try it on your own chat</button>';
+  const r = st.tryResult;
+  let res = '';
+  if (r){
+    res = !r.people.length
+      ? '<p class="try-empty">No messages found. Each line should look like “12/10/26, 9:14 pm - Karan: Rahul aa raha toh main bhi in” or “Karan: Rahul aa raha toh main bhi in”.</p>'
+      : '<p class="try-sum">' + r.people.length + ' people, ' + r.ifCount + ' with an “if”' + (r.yes != null ? ', and the poll said ' + r.yes + ' yes' : '') + '.</p><ul class="people">' + r.people.map(p => personRow(p, 'raw')).join('') + '</ul>';
+  }
+  return '<section class="try-own" aria-labelledby="try-h"><h3 class="mini" id="try-h">Try it on your own chat</h3>' +
+    '<p class="hint">In WhatsApp, open a group, tap its name, then Export chat and Without media. Paste the text below. It is read inside this page and never sent anywhere.</p>' +
+    '<label class="sr" for="chatInput">Chat text</label><textarea id="chatInput" data-k="chatInput" rows="8" spellcheck="false">' + esc(st.tryText) + '</textarea>' +
+    '<div class="row-btns"><button class="btn btn-primary sm" data-act="try-run" data-k="try-run">Read this chat</button><button class="btn btn-quiet sm" data-act="try-reset" data-k="try-reset">Use the sample</button></div>' + res + '</section>';
+}
+function s2(){
+  return '<div class="screen">' + pkHead('From “Goa Dec plan”') +
+    '<div class="app-body"><div class="pad">' +
+      '<h2 class="scr-title">Here’s where everyone stands</h2>' +
+      '<p class="scr-sub">Read from ' + PARSED.msgs.length + ' messages. Highlighted words are what Pakka understood.</p>' +
+      '<div class="found"><h3 class="mini">Trip details found</h3><dl class="kv">' +
+        '<div><dt>Where</dt><dd>Villa in Assagao, North Goa</dd></div>' +
+        '<div><dt>When</dt><dd>Fri Dec 11 to Sun Dec 13, 2 nights</dd></div>' +
+        '<div><dt>Cost</dt><dd>₹42,000 total, sleeps 8</dd></div>' +
+        '<div><dt>Poll</dt><dd>' + PARSED.yes + ' yes, ' + PARSED.no + ' no, 1 didn’t vote</dd></div></dl></div>' +
+      '<ul class="people">' + PARSED.people.map(p => personRow(p, 'org')).join('') + '</ul>' +
+      '<p class="privacy">' + IC.lock + '<span>Read on this phone. Pakka keeps only names, dates and the answers above. Each friend confirms their own answer when they open the link.</span></p>' +
+      tryBlock() +
+    '</div></div>' +
+    '<div class="app-foot"><button class="btn btn-primary" data-act="go" data-to="3" data-k="s2-cta">Looks right, set up the pact</button></div></div>';
+}
+
+function s3(){
+  const total = STAYS[0].total, hold = holdAmount();
+  const sneha = PARSED.byName.Sneha;
+  let firstMeet = null;
+  for (let n = st.minPeople; n <= 8; n++){ if (sneha && sneha.maxShare && Math.ceil(total / n) <= sneha.maxShare){ firstMeet = n; break; } }
+  let rows = '';
+  for (let n = st.minPeople; n <= 8; n++){
+    const notes = [];
+    if (n === st.minPeople) notes.push('Smallest group that locks');
+    if (n === firstMeet) notes.push('Sneha’s ' + fmt(sneha.maxShare) + ' “if” is met from here');
+    rows += '<tr' + (n === st.minPeople ? ' class="min"' : '') + '><td>' + n + ' going</td><td class="num">' + fmt(Math.ceil(total / n)) + '</td><td class="note">' + notes.join('. ') + '</td></tr>';
+  }
+  return '<div class="screen">' + pkHead('New pact') +
+    '<div class="app-body"><div class="pad">' +
+      '<h2 class="scr-title">Set the pact</h2>' +
+      '<p class="scr-sub">Filled in from the chat. Change anything that’s off.</p>' +
+      '<div class="stay-card"><div class="stay-art">' + IC.beach + '</div><div><p class="stay-name">Villa in Assagao</p><p class="stay-meta">North Goa, sleeps 8</p><p class="stay-meta">Fri Dec 11 to Sun Dec 13</p></div><p class="stay-price">' + fmt(total) + '<span>2 nights</span></p></div>' +
+      '<div class="field"><p class="f-lbl" id="lbl-min">Lock the trip when at least</p>' +
+        '<div class="stepper-ctl" role="group" aria-labelledby="lbl-min"><button class="icon-btn" data-act="min-dec" data-k="min-dec" aria-label="Fewer people"' + (st.minPeople <= 3 ? ' disabled' : '') + '>−</button>' +
+        '<span class="step-val"><b>' + st.minPeople + '</b> people are in</span>' +
+        '<button class="icon-btn" data-act="min-inc" data-k="min-inc" aria-label="More people"' + (st.minPeople >= 8 ? ' disabled' : '') + '>+</button></div></div>' +
+      '<div class="field"><p class="f-lbl" id="lbl-dl">Everyone decides by 8 PM on</p><div class="chips" role="group" aria-labelledby="lbl-dl">' +
+        DEADLINES.map((d, i) => '<button class="chip" aria-pressed="' + (st.dl === i) + '" data-act="dl" data-i="' + i + '" data-k="dl-' + i + '">' + d.chip + '</button>').join('') + '</div></div>' +
+      '<div class="hold-box"><p class="hold-line">Each friend holds <b>' + fmt(hold) + '</b></p>' +
+        '<p class="hold-help">That’s the share if only ' + st.minPeople + ' go. If more join, everyone pays less and the extra is released at lock.</p>' +
+        '<table class="ph"><caption class="sr">Price per head by group size</caption><thead><tr><th>Group</th><th>Each pays</th><th><span class="sr">Note</span></th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
+      '<p class="safety">' + IC.shield + '<span>If fewer than ' + st.minPeople + ' are in by ' + DEADLINES[st.dl].long + ', every hold is released. Nobody pays anything.</span></p>' +
+    '</div></div>' +
+    '<div class="app-foot"><button class="btn btn-primary" data-act="send" data-k="s3-cta">Send to the group</button></div></div>';
+}
+
+function ifSummary(k){
+  const parts = [];
+  if (k.person) parts.push(k.person + ' comes');
+  if (k.maxShare) parts.push('your share is ' + fmt(k.maxShare) + ' or less');
+  if (k.minPeople) parts.push(k.minPeople >= 8 ? 'all 8 go' : 'at least ' + k.minPeople + ' go');
+  return parts.length ? 'You’re in if ' + andList(parts) + '.' : 'With no “if” picked, this counts as “I’m in”.';
+}
+function chip(act, val, on, label){
+  return '<button class="chip" data-act="' + act + '" data-v="' + val + '" data-k="' + act + '-' + (val || 'none') + '" aria-pressed="' + on + '">' + esc(label) + '</button>';
+}
+function s4(){
+  const k = st.karan, hold = fmt(holdAmount()), dl = DEADLINES[st.dl];
+  const q = PARSED.byName.Karan.quote;
+  let main;
+  if (st.karanPledged){
+    const ans = k.mode === 'out' ? '' : (k.mode === 'in' || (!k.person && !k.maxShare && !k.minPeople) ? 'I’m in' : 'I’m in, ' + condText(k, 'friend'));
+    main = '<div class="done-card"><p class="done-title">' + (k.mode === 'out' ? 'Anu will see that you can’t come.' : 'Pledged. ₹0 charged.') + '</p>' +
+      '<p>' + (k.mode === 'out' ? 'No money was held.' : 'Your answer: ' + esc(ans) + '. ' + hold + ' is on hold on your ' + (k.pay === 'card' ? 'Scapia card' : 'UPI account') + ' until ' + dl.long + '.') + '</p>' +
+      '<button class="link-btn" data-act="change" data-k="change">Change my answer</button></div>' +
+      '<p class="privacy">' + IC.lock + '<span>Only Anu sees your “if”. The group sees that you pledged.</span></p>';
+  } else {
+    const people = ['Rahul', 'Priya', 'Sneha', 'Arjun', 'Meera', 'Anu', 'Vikram'];
+    const ifb = k.mode !== 'if' ? '' :
+      '<div class="ifb">' +
+        '<div class="ifb-row"><p class="f-lbl" id="ifb-p">If this friend comes</p><div class="chips" role="group" aria-labelledby="ifb-p">' + people.map(n => chip('person', n, k.person === n, n)).join('') + chip('person', '', !k.person, 'Anyone') + '</div></div>' +
+        '<div class="ifb-row"><p class="f-lbl" id="ifb-m">If my share is at most</p><div class="chips" role="group" aria-labelledby="ifb-m">' + [5000, 6000, 7000].map(v => chip('max', v, k.maxShare === v, fmt(v))).join('') + chip('max', '', !k.maxShare, 'Any amount') + '</div></div>' +
+        '<div class="ifb-row"><p class="f-lbl" id="ifb-c">If at least this many go</p><div class="chips" role="group" aria-labelledby="ifb-c">' + [6, 7, 8].map(v => chip('cnt', v, k.minPeople === v, v === 8 ? 'All 8' : v + '+')).join('') + chip('cnt', '', !k.minPeople, 'Any number') + '</div></div>' +
+        '<p class="ifb-sum">' + esc(ifSummary(k)) + '</p></div>';
+    const pay = k.mode === 'out' ? '' :
+      '<div class="field"><p class="f-lbl" id="lbl-pay">Hold the money on</p><div class="pay" role="radiogroup" aria-labelledby="lbl-pay">' +
+        '<button class="pay-opt" role="radio" aria-checked="' + (k.pay === 'card') + '" data-act="pay" data-v="card" data-k="pay-card"><span class="po-title">Scapia card ending 4821</span><span class="po-sub">Earns 20 coins per ₹100 on your share</span></button>' +
+        '<button class="pay-opt" role="radio" aria-checked="' + (k.pay === 'upi') + '" data-act="pay" data-v="upi" data-k="pay-upi"><span class="po-title">UPI</span><span class="po-sub">Blocks the amount in your bank account</span></button></div></div>';
+    main = '<h2 class="scr-title">Are you in, Karan?</h2>' +
+      '<div class="who-in"><p><b>4 pledged:</b> Anu, Rahul, Sneha, Arjun</p><p class="muted">Not yet: Priya, Meera. Can’t make it: Vikram.</p></div>' +
+      '<p class="prefill">In the chat you said “' + esc(q) + '”, so that answer is filled in. Change it if you like.</p>' +
+      '<div class="seg" role="radiogroup" aria-label="Your answer">' +
+        '<button role="radio" aria-checked="' + (k.mode === 'in') + '" data-act="mode" data-v="in" data-k="mode-in">I’m in</button>' +
+        '<button role="radio" aria-checked="' + (k.mode === 'if') + '" data-act="mode" data-v="if" data-k="mode-if">I’m in, if…</button>' +
+        '<button role="radio" aria-checked="' + (k.mode === 'out') + '" data-act="mode" data-v="out" data-k="mode-out">Can’t make it</button></div>' +
+      ifb + pay +
+      '<p class="privacy">' + IC.lock + '<span>Only Anu sees your “if”. The group sees that you pledged.</span></p>';
+  }
+  const foot = st.karanPledged
+    ? '<button class="btn btn-primary" data-act="go" data-to="5" data-k="s4-next">Skip to ' + esc(dl.short) + '</button>'
+    : (k.mode === 'out'
+      ? '<button class="btn btn-primary" data-act="pledge" data-k="s4-cta">Tell Anu I can’t come</button>'
+      : '<button class="btn btn-primary" data-act="pledge" data-k="s4-cta">Hold ' + hold + ' and pledge</button><p class="foot-note">Nothing is charged unless the trip locks</p>');
+  const sheet = !st.sheet ? '' :
+    '<div class="sheet-wrap" role="dialog" aria-modal="true" aria-labelledby="sheet-t"><button class="sheet-back" data-act="sheet-close" aria-label="Close"></button><div class="sheet">' +
+      '<p class="sheet-k">' + (k.pay === 'card' ? 'Scapia card ending 4821' : 'UPI, from your bank account') + '</p>' +
+      '<h3 id="sheet-t">Approve a hold of ' + hold + '</h3>' +
+      '<ul><li>Nothing is charged now.</li><li>If the trip locks, you pay your real share and the rest is released.</li><li>If it doesn’t lock, or your “if” isn’t met, the hold drops off at the deadline (' + esc(dl.long) + ').</li></ul>' +
+      '<p class="sheet-note">Simulated in this prototype. No money moves.</p>' +
+      '<button class="btn btn-primary" data-act="approve" data-k="approve">Approve hold</button><button class="btn btn-quiet" data-act="sheet-close" data-k="sheet-close">Not now</button></div></div>';
+  return '<div class="screen">' + pkHead('Opened from WhatsApp, no app needed') +
+    '<div class="app-body"><div class="pad">' +
+      '<div class="inbound"><p class="in-from">Anu in Goa Dec plan</p><div class="msg">Goa is almost pakka 🌴 Say “I’m in” or “I’m in, if…” by ' + esc(dl.short) + '.' +
+        '<span class="linkcard"><span class="lc-mark">Pakka</span><span class="lc-title">Goa, Dec 11–13</span><span class="lc-sub">Villa in Assagao, ₹42,000 shared</span></span></div></div>' +
+      main +
+    '</div></div><div class="app-foot">' + foot + '</div>' + sheet + '</div>';
+}
+
+function s5(){
+  const stay = STAYS[st.stay];
+  return '<div class="screen">' + pkHead('Decision time') +
+    '<div class="app-body"><div class="pad">' +
+      '<div class="s5-top"><div><p class="mk">Deadline</p><p class="mv">' + esc(DEADLINES[st.dl].long) + '</p></div><div><p class="mk">Stay</p><p class="mv">' + esc(stay.name) + ', ' + fmt(stay.total) + '</p></div></div>' +
+      '<div class="ticker" id="ticker"><p class="tk-cap">Each person pays</p><p class="tk-num" id="tkNum">–</p><p class="tk-sub" id="tkSub">Counting pledges</p></div>' +
+      '<div class="seatbar" id="seatbar" aria-hidden="true"></div>' +
+      '<div class="board" id="board"></div>' +
+      '<ol class="log" id="log" aria-live="polite"></ol>' +
+      '<div id="outcome"></div>' +
+      '<div class="whatif"><h3 class="mini">What if</h3>' +
+        '<label class="switch"><input type="checkbox" id="sw-rahul" data-k="sw-rahul"' + (st.rahulOut ? ' checked' : '') + '><span class="track" aria-hidden="true"></span><span>Rahul can’t come after all</span></label>' +
+        '<div class="wi-btns"><button class="link-btn" data-act="replay" data-k="replay">Replay the deadline</button>' + (st.stay !== 0 ? '<button class="link-btn" data-act="stay" data-v="0" data-k="stay-0">Go back to the Assagao villa</button>' : '') + '</div></div>' +
+    '</div></div><div class="app-foot" id="s5foot"></div></div>';
+}
+
+function stampSVG(line){
+  return '<svg class="stamp' + (st.stampAnim ? ' thump' : '') + '" viewBox="0 0 240 112" role="img" aria-label="Stamped: Pakka">' +
+    '<defs><filter id="inkgrain" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="7" result="n"/>' +
+    '<feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -2.3 2.05" result="m"/><feComposite in="SourceGraphic" in2="m" operator="in"/></filter></defs>' +
+    '<g filter="url(#inkgrain)"><rect x="5" y="5" width="230" height="102" rx="16" fill="none" stroke="currentColor" stroke-width="5"/>' +
+    '<rect x="15" y="15" width="210" height="82" rx="9" fill="none" stroke="currentColor" stroke-width="1.6"/>' +
+    '<text x="120" y="69" text-anchor="middle" fill="currentColor" style="font:800 50px var(--display);font-stretch:115%;letter-spacing:4px">PAKKA</text>' +
+    '<text x="120" y="88" text-anchor="middle" fill="currentColor" style="font:600 11px var(--body);letter-spacing:2.4px">' + esc(line) + '</text></g></svg>';
+}
+function s6(){
+  const r = resolveNow();
+  if (!r.locked){
+    return '<div class="screen">' + pkHead('Goa, Dec 11–13') + '<div class="app-body"><div class="pad">' +
+      '<h2 class="scr-title">Not pakka yet</h2><p class="muted">This version of the plan didn’t lock at the deadline, so nobody was charged. Go back to the deadline to fix it.</p>' +
+      '</div></div><div class="app-foot"><button class="btn btn-primary" data-act="go" data-to="5" data-k="s6-back">Back to ' + esc(DEADLINES[st.dl].short) + '</button></div></div>';
+  }
+  const stay = STAYS[st.stay], hold = holdAmount(), share = r.share;
+  const going = NAMES.filter(n => r.S.has(n));
+  const card = going.filter(n => payOf(n) === 'card'), upi = going.filter(n => payOf(n) === 'upi');
+  const coins = Math.round(share * 0.2), coinVal = Math.round(coins / 5);
+  const coinLines = (card.length ? '<p><b>Paid with a Scapia card:</b> ' + esc(andList(card.map(nm))) + '. Each earns ' + coins.toLocaleString('en-IN') + ' coins, worth ' + fmt(coinVal) + '.</p>' : '') +
+    (upi.length ? '<p><b>Paid by UPI:</b> ' + esc(andList(upi.map(nm))) + '. Each sees the ' + fmt(coinVal) + ' in coins they missed, with an offer to get the card.</p>' : '');
+  return '<div class="screen">' + pkHead('Booked') + '<div class="app-body"><div class="pad">' +
+    '<div class="ticket">' + stampSVG('GOA  ★  11–13 DEC') +
+      '<p class="tkt-title">Goa</p><p class="tkt-dates">Fri Dec 11 to Sun Dec 13</p>' +
+      '<dl class="tkt-rows"><div><dt>Stay</dt><dd>' + esc(stay.name) + ', ' + esc(stay.area) + '</dd></div>' +
+      '<div><dt>Going</dt><dd>' + esc(andList(going.map(nm))) + '</dd></div>' +
+      '<div><dt>Paid</dt><dd>' + fmt(stay.total) + ' in one booking</dd></div></dl></div>' +
+    '<div class="facts">' +
+      '<div class="fact"><span class="f-num">' + fmt(share) + '</span><span class="f-lbl2">charged to each person</span></div>' +
+      '<div class="fact"><span class="f-num">' + fmt(hold - share) + '</span><span class="f-lbl2">of each hold released</span></div>' +
+      '<div class="fact"><span class="f-num">₹0</span><span class="f-lbl2">fronted by you</span></div>' +
+      '<div class="fact"><span class="f-num">0</span><span class="f-lbl2">reminders you sent</span></div></div>' +
+    '<section class="coins" aria-labelledby="coins-h"><h3 class="mini" id="coins-h">Scapia coins on this trip</h3>' + coinLines + '</section>' +
+    '<div class="share-prev"><p class="in-from">Pakka posts this to Goa Dec plan</p><div class="msg">Goa is pakka! ' + going.length + ' of us, Dec 11–13, ' + esc(stay.short) + ' booked. Everyone paid ' + fmt(share) + ', no advance needed 🎉</div></div>' +
+    '<p class="next-up"><b>Coming next: seat swap.</b> If someone can’t go after all, they hand their seat to a friend and the money moves with it.</p>' +
+    '</div></div><div class="app-foot"><button class="btn btn-quiet" data-act="restart" data-k="restart">Start over</button></div></div>';
+}
+
+const SCREENS = {1:s1, 2:s2, 3:s3, 4:s4, 5:s5, 6:s6};
+
+/* ================= the deadline animation ================= */
+const STEP_MS = 1150;
+function stopRun(){ if (st.run && st.run.timer){ clearTimeout(st.run.timer); st.run.timer = null; } }
+function startRun(){
+  stopRun();
+  const res = resolveNow();
+  const steps = res.locked ? successSteps(res) : failSteps(res);
+  st.run = {res, steps, shown: RM ? steps.length : 0, timer:null};
+  const tk = $('#tkNum'); if (tk) tk._v = null;
+  paintS5();
+  paintNotes();
+  if (!RM) tick();
+}
+function tick(){
+  const run = st.run;
+  if (!run || run.shown >= run.steps.length) return;
+  run.timer = setTimeout(() => { run.shown++; paintS5(true); tick(); }, run.shown === 0 ? 650 : STEP_MS);
+}
+function boardState(run){
+  const {res, steps, shown} = run;
+  const state = {};
+  NAMES.forEach(n => { const s = res.P[n].status; state[n] = (s === 'in' || s === 'if') ? 'wait' : 'cant'; });
+  let n = 0, final = null;
+  for (let i = 0; i < shown; i++){
+    const s = steps[i];
+    if (s.kind === 'base' || s.kind === 'join' || s.kind === 'pact'){ s.names.forEach(x => { state[x] = 'in'; }); n = s.n; }
+    else if (s.kind === 'released') s.names.forEach(x => { state[x] = 'released'; });
+    else if (s.kind === 'start'){ s.names.forEach(x => { state[x] = 'tentative'; }); n = s.n; }
+    else if (s.kind === 'drop'){ s.names.forEach(x => { state[x] = 'fell'; }); n = s.n; }
+    else if (s.kind === 'nolock'){ NAMES.forEach(x => { if (state[x] === 'tentative' || state[x] === 'fell') state[x] = 'released'; }); n = s.n; final = 'fail'; }
+    else if (s.kind === 'lock') final = 'lock';
+  }
+  return {state, n, final};
+}
+const STATE_LABEL = {wait:'pledged', in:'in', tentative:'pledged', fell:'out', released:'released', cant:'can’t'};
+function tween(el, to){
+  const from = el._v;
+  el._v = to;
+  if (RM || from == null || from === to){ el.textContent = fmt(to); return; }
+  const t0 = performance.now(), d = 480;
+  cancelAnimationFrame(el._raf);
+  const f = t => { const k = Math.min(1, (t - t0) / d), e = 1 - Math.pow(1 - k, 3); el.textContent = fmt(from + (to - from) * e); if (k < 1) el._raf = requestAnimationFrame(f); };
+  el._raf = requestAnimationFrame(f);
+}
+function paintS5(animated){
+  const run = st.run;
+  if (!run || st.screen !== 5 || !$('#board')) return;
+  const {res, steps, shown} = run;
+  const {state, n, final} = boardState(run);
+  const tkNum = $('#tkNum'), tkSub = $('#tkSub');
+  $('#ticker').dataset.final = final || '';
+  if (final === 'fail'){ cancelAnimationFrame(tkNum._raf); tkNum._v = null; tkNum.textContent = '₹0'; tkSub.textContent = 'charged to anyone. All holds released.'; }
+  else if (n > 0){ tween(tkNum, Math.ceil(res.total / n)); tkSub.textContent = final === 'lock' ? 'each. ' + n + ' are in.' : 'each, with ' + n + (n === 1 ? ' person' : ' people') + ' in so far'; }
+  else { tkNum._v = null; tkNum.textContent = '–'; tkSub.textContent = 'Counting pledges'; }
+  const cnt = NAMES.filter(x => state[x] === 'in' || state[x] === 'tentative').length;
+  const tent = NAMES.some(x => state[x] === 'tentative');
+  $('#seatbar').innerHTML = Array.from({length:8}, (_, i) => '<i class="' + (i < cnt ? (tent ? 'tent' : 'on') : '') + '"></i>').join('') +
+    '<span class="sb-mark" style="left:calc(' + (st.minPeople / 8 * 100) + '% - 2px)"><span>Locks at ' + st.minPeople + '</span></span>';
+  const prev = st._prevState || {};
+  $('#board').innerHTML = NAMES.map(x => '<div class="seat" data-state="' + state[x] + '"><span class="av' + (animated && state[x] === 'in' && prev[x] !== 'in' ? ' pop' : '') + '" aria-hidden="true">' + esc(initials(x)) + '</span><span class="seat-n">' + esc(nm(x)) + '</span><span class="seat-s">' + STATE_LABEL[state[x]] + '</span></div>').join('');
+  st._prevState = state;
+  const visible = steps.slice(0, shown).filter(s => s.text);
+  const icon = k => (k === 'base' || k === 'join') ? IC.check : k === 'pact' ? IC.link : k === 'start' ? IC.dot : IC.x;
+  $('#log').innerHTML = visible.map((s, i) => '<li class="lg lg-' + s.kind + (i === visible.length - 1 && shown < steps.length + 1 && !final ? ' new' : '') + '"><span class="lg-ic">' + icon(s.kind) + '</span><span>' + esc(s.text) + '</span></li>').join('');
+  let oc = '', foot = '';
+  if (final === 'lock'){
+    oc = '<div class="outcome ok"><p class="oc-title">Pakka. ' + res.S.size + ' are in at ' + fmt(res.share) + ' each.</p><p>Every hold turns into a payment at the same moment, so nobody had to go first.</p></div>';
+    foot = '<button class="btn btn-primary" data-act="go" data-to="6" data-k="s5-book">Book it for ' + res.S.size + '</button>';
+  } else if (final === 'fail'){
+    const fix = findFix();
+    const key = st.rahulOut && res.drops.length
+      ? 'Rahul dropping out knocked out ' + res.drops.length + ' more: ' + andList(res.drops.map(d => nm(d.name))) + '.'
+      : 'Only ' + res.S.size + ' could make it, and the pact needs ' + st.minPeople + '.';
+    let fixHtml = '<p>No cheaper stay saves this one. Try other dates, or talk to the friends whose “if” broke.</p>';
+    if (fix){
+      const back = NAMES.filter(x => fix.r.S.has(x) && !res.S.has(x)).map(nm);
+      fixHtml = '<div class="fix"><p class="fix-t">A fix Pakka found</p><p>The ' + esc(STAYS[fix.i].short) + ' costs ' + fmt(STAYS[fix.i].total) + '. Then ' + fix.r.S.size + ' people pay ' + fmt(fix.r.share) + ' each' + (back.length ? ', which brings back ' + esc(andList(back)) : '') + '.</p><p class="fix-note">Everyone’s hold already covers it. The group sees the switch before anyone is charged.</p></div>';
+      foot = '<button class="btn btn-primary" data-act="stay" data-v="' + fix.i + '" data-k="s5-fix">Switch to the ' + esc(STAYS[fix.i].short) + '</button>';
+    } else {
+      foot = '<button class="btn btn-quiet" data-act="replay" data-k="s5-replay">Replay the deadline</button>';
+    }
+    oc = '<div class="outcome fail"><p class="oc-title">Not this time. Nobody is charged.</p><p>' + esc(key) + '</p>' + fixHtml + '</div>';
+  } else {
+    foot = '<button class="btn btn-quiet" data-act="skip" data-k="s5-skip">Show the result now</button>';
+  }
+  $('#outcome').innerHTML = oc;
+  const f = $('#s5foot');
+  const fk = document.activeElement && f.contains(document.activeElement) ? document.activeElement.dataset.k : null;
+  f.innerHTML = foot;
+  if (fk){ const b = f.querySelector('button'); if (b) b.focus({preventScroll:true}); }
+}
+
+/* ================= notes ================= */
+function notesFor(n){
+  const r = resolveNow(), hold = holdAmount(), total = STAYS[0].total;
+  switch (n){
+    case 1: return {t:'The group chat today', b:[
+      ['What you’re seeing', 'A Goa plan in a college group chat. Six people voted yes in the poll. Nobody sent the ₹20,000 advance, and the plan is going quiet.'],
+      ['The insight', 'Four of the six yeses came with an “if”: if Rahul comes, if it’s under ₹7k, if 5+ go, if Meera comes. Meera never voted but has one too. A poll has nowhere to put an “if”, so nobody can see that all of them could be true at once.'],
+      ['Why it stalls', 'Paying first is a bad deal. If others drop out, the first payer is stuck with a bigger share or a smaller trip. So everyone waits, and the organiser either fronts the money or lets the plan die.'],
+      ['Who I’m designing for', 'The organiser: the friend who finds the villa, starts the poll and ends up chasing everyone for money.']
+    ]};
+    case 2: return {t:'Pakka reads the chat', b:[
+      ['Decision', 'Start where the plan already lives. The organiser exports the WhatsApp chat, and Pakka drafts each person’s answer next to the message it came from.'],
+      ['Where the AI stops', 'The AI drafts and people confirm. Each friend confirms their own answer when they open the link. When a message is unclear, Pakka asks that friend instead of guessing.'],
+      ['Privacy', 'The chat is read on the organiser’s phone. Only names, dates and the extracted answers leave the device.'],
+      ['Language', 'Friend groups plan in Hinglish and other mixes, like “7k ke andar ho toh”. This page reads a few common patterns with simple rules. Paste your own chat to try it; nothing leaves your browser.'],
+      ['How I’d measure it', 'Label 50 real trip chats as a test set. Turn on auto-fill for each kind of “if” only once it is right more than 90% of the time on that set.']
+    ]};
+    case 3: return {t:'The organiser sets the pact', b:[
+      ['Decision', 'Hold the money instead of charging it. Each friend blocks their worst-case share: ' + fmt(total) + ' ÷ ' + st.minPeople + ' = ' + fmt(hold) + '. At lock, Pakka takes only the real share and releases the rest.'],
+      ['Why it can be built now', 'A UPI one-time mandate lets a merchant block an amount now and debit it once, later, within a set window. A card hold does the same on a credit card. No new payment rails are needed.'],
+      ['Why show price per head', 'Headcount and price move together. Each new person lowers everyone’s share, which can meet someone else’s price “if”. Sneha is in at 6 people, not at 5.'],
+      ['Target', 'Setup in under a minute. The organiser is already doing everyone a favour.']
+    ], src:'<a href="https://docs.payu.in/docs/upi-one-time-mandate-integration" target="_blank" rel="noopener">PayU docs on UPI one-time mandates</a>'};
+    case 4: return {t:'Karan says “I’m in, if…”', b:[
+      ['Core interaction', 'A poll asks yes or no. Pakka asks for the answer people actually have: in, in if, or can’t. An “if” can be a friend, a price or a headcount.'],
+      ['Who sees the “if”', 'Only the organiser, who needs it to fix the plan. The group sees “pledged”. Nobody gets publicly ranked by who they’ll travel for.'],
+      ['What I left out', '“Only if X doesn’t come.” Pakka should never become a way to leave someone out.'],
+      ['Friction', 'Friends install nothing. The link opens in the browser, the answer is pre-filled from the chat, and the hold is one UPI or card approval.'],
+      ['Try it', 'Change Karan’s “if”, then see whether the trip still locks on the next screen.']
+    ]};
+    case 5: return {t:'Friday, 8 PM', b:[
+      ['What happens', 'Pakka finds the biggest group in which every person’s “if” is true at the same time, then locks all of them together. Nobody pays first, so nobody risks paying more.'],
+      ['Deadlocks', 'Priya and Meera each said “if she comes”. A group chat can’t break that loop. Here both conditions are true together, so both are in.'],
+      ['If it fails', 'Every hold is released and nobody is charged. The organiser sees which “if” broke and gets a fix, such as a cheaper stay. Flip the switch on the screen to see it.'],
+      ['North star', 'Trips that actually happen: locked and travelled, per month. Alongside it I’d watch pledges per invite, the share of “ifs” that end in “in”, and days from first message to lock.']
+    ]};
+    default: {
+      const going = r.locked ? r.S.size : 0;
+      return {t:'It’s pakka', b:[
+        ['Outcome', r.locked ? going + ' people, ' + fmt(r.share) + ' each, one booking for ' + fmt(STAYS[st.stay].total) + '. The organiser paid nothing upfront and chased nobody.' : 'This version didn’t lock, so nobody paid anything.'],
+        ['Who pays', 'The stay pays a commission on a group booking that otherwise wouldn’t have happened: about ' + fmt(STAYS[st.stay].total * 0.12) + ' at an assumed 12%. Scapia’s growth budget pays too: friends who paid by UPI see the coins they missed while they are spending on travel. Friends pay nothing extra.'],
+        ['Who has to say yes', 'Payments, to run UPI mandates through a gateway. The issuing bank, on card hold rules. Supply, so hosts hold the stay until the deadline. Risk and Legal, on release and refund terms.'],
+        ['Next', 'Seat swap: after lock, someone who can’t go hands their seat to a friend, and the money moves with the seat.']
+      ], src:'<a href="https://www.scapia.cards/product/blog/scapia-coins" target="_blank" rel="noopener">Scapia: how coins work</a> (20 coins per ₹100 on app bookings, 5 coins = ₹1)'};
+    }
+  }
+}
+function paintNotes(){
+  const d = notesFor(st.screen);
+  $('#notes').innerHTML = '<p class="n-k">Product notes, screen ' + st.screen + ' of 6</p><h2 class="n-title">' + d.t + '</h2>' +
+    d.b.map(x => '<section class="n-b"><h3>' + x[0] + '</h3><p>' + x[1] + '</p></section>').join('') +
+    (d.src ? '<p class="n-src">Source: ' + d.src + '</p>' : '');
+}
+
+/* ================= render + events ================= */
+function render(newScreen){
+  const app = $('#app');
+  const body = app.querySelector('.app-body');
+  const keep = !newScreen && body ? body.scrollTop : 0;
+  const ae = document.activeElement;
+  const fk = !newScreen && ae && app.contains(ae) && ae.dataset ? ae.dataset.k : null;
+  app.innerHTML = SCREENS[st.screen]();
+  const nb = app.querySelector('.app-body'); if (nb) nb.scrollTop = keep;
+  if (fk){ const el = app.querySelector('[data-k="' + fk + '"]'); if (el) el.focus({preventScroll:true}); }
+  document.querySelectorAll('#journey button').forEach(b => { if (+b.dataset.go === st.screen) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current'); });
+  $('#stepLabel').textContent = 'Screen ' + st.screen + ' of 6';
+  $('#prev').disabled = st.screen === 1;
+  $('#next').disabled = st.screen === 6;
+  $('#persona').innerHTML = IC.phone + (st.screen === 4 ? '<span><b>Karan’s phone</b>, a friend in the group</span>' : '<span><b>Anu’s phone</b>, the organiser</span>');
+  paintNotes();
+  if (st.toast){
+    const t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); t.textContent = st.toast;
+    app.appendChild(t); st.toast = null; setTimeout(() => t.remove(), 2700);
+  }
+  st.stampAnim = false;
+  if (st.sheet){ const a = app.querySelector('[data-act="approve"]'); if (a) a.focus({preventScroll:true}); }
+}
+function go(n){
+  n = Math.max(1, Math.min(6, n));
+  stopRun();
+  st.screen = n; st.sheet = false;
+  if (n === 6) st.stampAnim = true;
+  st._prevState = null;
+  render(true);
+  if (n === 5) startRun();
+  if (window.matchMedia('(max-width: 780px)').matches){
+    const p = $('#persona'); if (p) p.scrollIntoView({block:'start', behavior: RM ? 'auto' : 'smooth'});
+  }
+}
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-act],[data-go]');
+  if (!b || b.disabled) return;
+  if (b.dataset.go){ go(+b.dataset.go); return; }
+  const v = b.dataset.v;
+  switch (b.dataset.act){
+    case 'prev': go(st.screen - 1); break;
+    case 'next': go(st.screen + 1); break;
+    case 'go': go(+b.dataset.to); break;
+    case 'try-open': st.tryOpen = true; st.tryResult = parseChat(st.tryText); render(); { const ta = $('#chatInput'); if (ta) ta.focus({preventScroll:true}); } break;
+    case 'try-run': { const ta = $('#chatInput'); st.tryText = ta ? ta.value : st.tryText; st.tryResult = parseChat(st.tryText); render(); } break;
+    case 'try-reset': st.tryText = SAMPLE_CHAT; st.tryResult = parseChat(SAMPLE_CHAT); render(); break;
+    case 'min-dec': st.minPeople = Math.max(3, st.minPeople - 1); render(); break;
+    case 'min-inc': st.minPeople = Math.min(8, st.minPeople + 1); render(); break;
+    case 'dl': st.dl = +b.dataset.i; render(); break;
+    case 'send': st.toast = 'Sent to Goa Dec plan'; go(4); break;
+    case 'mode': st.karan.mode = v; render(); break;
+    case 'person': st.karan.person = v || null; render(); break;
+    case 'max': st.karan.maxShare = v ? +v : null; render(); break;
+    case 'cnt': st.karan.minPeople = v ? +v : null; render(); break;
+    case 'pay': st.karan.pay = v; render(); break;
+    case 'pledge':
+      if (st.karan.mode === 'if' && !st.karan.person && !st.karan.maxShare && !st.karan.minPeople) st.karan.mode = 'in';
+      if (st.karan.mode === 'out'){ st.karanPledged = true; render(); }
+      else { st.sheet = true; render(); }
+      break;
+    case 'approve': st.sheet = false; st.karanPledged = true; render(true); break;
+    case 'sheet-close': st.sheet = false; render(); { const c = $('[data-k="s4-cta"]'); if (c) c.focus({preventScroll:true}); } break;
+    case 'change': st.karanPledged = false; render(true); break;
+    case 'replay': startRun(); break;
+    case 'skip': if (st.run){ stopRun(); st.run.shown = st.run.steps.length; paintS5(); } break;
+    case 'stay': st.stay = +v; render(); startRun(); break;
+    case 'restart': st = freshState(); go(1); break;
+  }
+});
+document.addEventListener('change', e => {
+  if (e.target.id === 'sw-ifs'){ st.showIfs = e.target.checked; const c = $('.chat'); if (c) c.classList.toggle('plain', !st.showIfs); }
+  if (e.target.id === 'sw-rahul'){ st.rahulOut = e.target.checked; startRun(); }
+});
+document.addEventListener('input', e => { if (e.target.id === 'chatInput') st.tryText = e.target.value; });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && st.sheet){ st.sheet = false; render(); const c = $('[data-k="s4-cta"]'); if (c) c.focus({preventScroll:true}); }
+});
+
+$('#prev').innerHTML = IC.left;
+$('#next').innerHTML = IC.right;
+let start = 1;
+try { const h = (location.hash || '').replace('#', ''); const m = h.match(/^screen([1-6])$/); if (m) start = +m[1]; } catch (err) {}
+st.screen = start;
+render(true);
+if (start === 5) startRun();
+
+window.__pakka = {parseChat, resolve, pledgeMap, resolveNow, joinSteps, successSteps, failSteps, findFix, get st(){ return st; }, NAMES, PARSED};
+})();
+</script>
+
 </body>
 </html>
